@@ -7,29 +7,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'Hello, World at port ' + sys.argv[1]
-    
-@app.route('/life')
-def life_get():
-    if computer_protocol.IS_ALIVE:
-        return render_template('computer_life.html', LIFE_STATUS = 'Alive')
-    else:
-        return render_template('computer_life.html', LIFE_STATUS = 'Dead')
+    return 'Computer : Hello, World at port ' + sys.argv[1]
 
-@app.route('/life', methods = ['POST'])
-def life_post():
-    computer_protocol.IS_ALIVE = not computer_protocol.IS_ALIVE
-    return 'Altered!'
-
-@app.route('/work', methods = ['POST'])
-def work_post():
-    computer_protocol.goto_work(int(request.form['router_id']))
+@app.route('/new_task/<router_id>', methods = ['POST'])
+def new_task_post(router_id):
+    computer_protocol.goto_work(int(router_id), int(request.form['task_id']))
     return 'went to work'
-
-@app.route('/finish', methods = ['POST'])
-def free_post():
-    computer_protocol.finish_work()
-    return 'finished work'
 
 def init():
     computer_protocol.run(int(sys.argv[1]) - 5100)

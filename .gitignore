@@ -1,4 +1,7 @@
 computer_protocol.pyc
 router_protocol.pyc
+data_user_protocol.pyc
 protocol_const.pyc
-something
+computer_logs.txt
+router_logs.txt
+data_user_logs.txt
