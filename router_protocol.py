@@ -10,8 +10,14 @@ AVAILABILITY_LIST = [True] * NUMBER_OF_COMPUTERS
 AVAILABLE_COMPUTERS_DEQUE = deque()
 WORKING_COMPUTERS_DEQUE = deque()
 MY_TASK = {}
+MY_SECRET = 0
 
 UNDER_MY_WORKING = Set()
+
+def set_secret(secret)
+    global MY_SECRET
+    MY_SECRET = str(secret)
+    return 'Got Secret'
 
 def init(my_id):
     global MY_ID

@@ -46,6 +46,10 @@ def end_task():
 def search_available():
     return str(router_protocol.give_me_available_computer())
 
+@app.route('/set_secret', methods = ['POST'])
+def set_secret():
+    return str(router_protocol.set_secret(request.form['secret']))
+
 def init():
     router_protocol.run(int(sys.argv[1]) - 5000)
 
