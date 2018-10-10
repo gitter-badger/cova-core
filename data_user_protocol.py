@@ -3,10 +3,12 @@ import time, thread, requests
 
 MY_ID = 0
 MY_TASKS = {}
+FP = 0
 
 def init(my_id):
-    global MY_ID
+    global MY_ID, FP
     MY_ID = my_id
+    FP = open('Log/data_user.txt', 'a+', 0)
 
 def new_task(task_id, router_id):
     global MY_TASKS
@@ -16,11 +18,14 @@ def new_task(task_id, router_id):
     computer_id = str(requests.post(router_address, data = {'task_id' : str(task_id)}).text)
     MY_TASKS[task_id] = router_id
 
+    FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Working task id ' + str(task_id) + ' to computer id ' + str(computer_id) + '\n')
+
     return str(computer_id)
 
 def end_task(task_id):
     global MY_TASKS
     MY_TASKS.pop(task_id)
+    FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
 
 def print_all_task():
     global MY_TASKS

@@ -12,7 +12,7 @@ def hello():
 @app.route('/new_task/<task_id>/<router_id>')
 def new_task(task_id, router_id):
     computer_id = data_user_protocol.new_task(int(task_id), int(router_id))
-    return 'Work is at computer : ' + str(computer_id)
+    return str(computer_id)
 
 @app.route('/end_task', methods = ['POST'])
 def end_task():

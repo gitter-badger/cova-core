@@ -11,17 +11,19 @@ AVAILABLE_COMPUTERS_DEQUE = deque()
 WORKING_COMPUTERS_DEQUE = deque()
 MY_TASK = {}
 MY_SECRET = 0
+FP = 0
 
 UNDER_MY_WORKING = Set()
 
-def set_secret(secret)
+def set_secret(secret):
     global MY_SECRET
     MY_SECRET = str(secret)
     return 'Got Secret'
 
 def init(my_id):
-    global MY_ID
+    global MY_ID, FP
     MY_ID = my_id
+    FP = open('Log/router.txt', 'a+', 0)
 
 def make_computer_available(computer_id):
     global AVAIBILITY_LIST
@@ -80,8 +82,6 @@ def search_for_available_computer():
 
 def new_task(data_user_id, task_id):
 
-    print('Got New Task', task_id)
-
     global UNDER_MY_WORKING, MY_TASK
 
     computer_id = search_for_available_computer()
@@ -93,7 +93,14 @@ def new_task(data_user_id, task_id):
 
     MY_TASK[task_id] = {'data_user_id' : data_user_id, 'computer_id' : computer_id, 'heartbeat' : give_me_time_counter()}
 
-    requests.post(computer_address, data = {'task_id' : str(task_id)})
+    try:
+        requests.post(computer_address, data = {'task_id' : str(task_id)})
+    except:
+        MY_TASK.pop(task_id)
+        new_task(data_user_id, task_id)
+        return
+
+    FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Assigning task id ' + str(task_id) + ' to computer id ' + str(computer_id) + '\n')
     
     routers = give_me_random_routers(computer_id)
     
@@ -108,8 +115,6 @@ def new_task(data_user_id, task_id):
 
 def end_task(task_id, notify_data_user = True):
 
-    print('Ending Task ', task_id)
-
     global UNDER_MY_WORKING, MY_TASK
 
     computer_id = MY_TASK[task_id]['computer_id']
@@ -118,6 +123,8 @@ def end_task(task_id, notify_data_user = True):
     UNDER_MY_WORKING.remove(computer_id)
 
     MY_TASK.pop(task_id)
+
+    FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Ending task id ' + str(task_id) + ' from computer id ' + str(computer_id) + '\n')
     
     routers = give_me_random_routers(computer_id)
     
@@ -134,9 +141,7 @@ def end_task(task_id, notify_data_user = True):
 
 
 def reassign_task(computer_id, data_user_id, task_id):
-
-    print('Reassiging Work')
-
+    FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Reassigning task id ' + str(task_id) + '\n')
     end_task(task_id, False)
     new_task(data_user_id, task_id)
 

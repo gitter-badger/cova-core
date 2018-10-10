@@ -5,12 +5,14 @@ HEARTBEAT_ROUTERS = []
 MY_ID = 0
 IS_WORKING = False
 MY_TASK_ID = 0
+FP = 0
 
 def init(my_id):
-    global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING
+    global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING, FP
     IS_WORKING = False
     MY_ID = my_id
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)
+    FP = open('Log/computer.txt', 'a+', 0)
 
 def send_heartbeat():
     while True:
@@ -40,7 +42,11 @@ def do_work(router_id, task_id):
     MY_TASK_ID = task_id
     HEARTBEAT_ROUTERS = [router_id]
 
+    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Starting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
+
     temp_working(task_id)
+
+    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
     
     IS_WORKING = False
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)

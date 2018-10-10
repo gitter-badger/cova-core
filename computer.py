@@ -14,6 +14,10 @@ def new_task_post(router_id):
     computer_protocol.goto_work(int(router_id), int(request.form['task_id']))
     return 'went to work'
 
+@app.route('/ping')
+def ping():
+    return 'Alive'
+
 def init():
     computer_protocol.run(int(sys.argv[1]) - 5100)
 

@@ -31,3 +31,6 @@ def give_me_data_user_address(computer_id):
 def give_me_time_counter():
     return int(time.mktime(datetime.now().timetuple()))
 
+def give_me_time():
+    nowtime = datetime.now()
+    return str(nowtime.hour) + ':' + str(nowtime.minute) + ':' + str(nowtime.second) + ' '

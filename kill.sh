@@ -15,3 +15,5 @@ while read -r line
 do
     kill $line
 done < "$filename"
+
+rm Log/*
