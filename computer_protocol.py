@@ -1,5 +1,5 @@
 from protocol_const import *
-import time, thread, requests
+import time, thread, requests, importlib
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -33,10 +33,24 @@ def send_heartbeat():
         
         time.sleep(COMPUTER_HEARTBEAT_TIME)
 
-def temp_working(task_id):
-    time.sleep(50)
+def temp_working(task_id, code_bin):
 
-def do_work(router_id, task_id):
+    file_name = 'Code/code' + str(MY_ID) + '.py'
+    code_fp = open(file_name, 'w+')
+    code_fp.write(code_bin)
+    code_fp.close()
+
+    module_name = 'Code.code' + str(MY_ID)
+
+    user_module = importlib.import_module(module_name)
+
+    user_module.main()
+
+    ret_fp = open('Code/output.txt', 'r')
+
+    return str(ret_fp.read())
+
+def do_work(router_id, task_id, code_bin):
     global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID
     IS_WORKING = True
     MY_TASK_ID = task_id
@@ -44,7 +58,7 @@ def do_work(router_id, task_id):
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Starting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
 
-    temp_working(task_id)
+    ret = temp_working(task_id, code_bin)
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
     
@@ -52,10 +66,10 @@ def do_work(router_id, task_id):
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)
     router_address = give_me_router_address(router_id)
     router_address += '/computer/end_task'
-    requests.post(router_address, data = {'task_id' : str(task_id)})
+    requests.post(router_address, data = {'task_id' : str(task_id), 'return_value' : ret})
 
-def goto_work(router_id, task_id):
-    thread.start_new_thread(do_work, (router_id, task_id))
+def goto_work(router_id, task_id, code_bin):
+    thread.start_new_thread(do_work, (router_id, task_id, code_bin))
     
 def run(my_id):
     init(my_id)

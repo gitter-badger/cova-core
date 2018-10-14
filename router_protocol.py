@@ -80,7 +80,7 @@ def search_for_available_computer():
             continue
         return int(computer_id)
 
-def new_task(data_user_id, task_id):
+def new_task(data_user_id, task_id, code_bin):
 
     global UNDER_MY_WORKING, MY_TASK
 
@@ -91,13 +91,13 @@ def new_task(data_user_id, task_id):
     computer_address += '/new_task/'
     computer_address += str(MY_ID)
 
-    MY_TASK[task_id] = {'data_user_id' : data_user_id, 'computer_id' : computer_id, 'heartbeat' : give_me_time_counter()}
+    MY_TASK[task_id] = {'data_user_id' : data_user_id, 'computer_id' : computer_id, 'heartbeat' : give_me_time_counter(), 'code_bin' : code_bin}
 
     try:
-        requests.post(computer_address, data = {'task_id' : str(task_id)})
+        requests.post(computer_address, data = {'task_id' : str(task_id), 'code_bin' : code_bin})
     except:
         MY_TASK.pop(task_id)
-        new_task(data_user_id, task_id)
+        new_task(data_user_id, task_id, code_bin)
         return
 
     FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Assigning task id ' + str(task_id) + ' to computer id ' + str(computer_id) + '\n')
@@ -113,7 +113,7 @@ def new_task(data_user_id, task_id):
     return str(computer_id)
     
 
-def end_task(task_id, notify_data_user = True):
+def end_task(task_id, return_value, notify_data_user = True):
 
     global UNDER_MY_WORKING, MY_TASK
 
@@ -137,13 +137,13 @@ def end_task(task_id, notify_data_user = True):
     if notify_data_user:
         data_user_address = give_me_data_user_address(data_user_id)
         data_user_address += '/end_task'
-        requests.post(data_user_address, data = {'task_id' : str(task_id)})
+        requests.post(data_user_address, data = {'task_id' : str(task_id), 'return_value' : return_value})
 
 
-def reassign_task(computer_id, data_user_id, task_id):
+def reassign_task(computer_id, data_user_id, task_id, code_bin):
     FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Reassigning task id ' + str(task_id) + '\n')
-    end_task(task_id, False)
-    new_task(data_user_id, task_id)
+    end_task(task_id, 'None', False)
+    new_task(data_user_id, task_id, code_bin)
 
 def check_working_computers():
 
@@ -151,7 +151,7 @@ def check_working_computers():
         for task_id, task in MY_TASK.iteritems():
             now_time = give_me_time_counter()
             if now_time - task['heartbeat'] > WORKING_COMPUTER_DETECTION_TIME:
-                reassign_task(task['computer_id'], task['data_user_id'], task_id)
+                reassign_task(task['computer_id'], task['data_user_id'], task_id, task['code_bin'])
 
         time.sleep(WORKING_COMPUTER_DETECTION_TIME)
 

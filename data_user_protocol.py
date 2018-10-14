@@ -10,22 +10,26 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/data_user.txt', 'a+', 0)
 
-def new_task(task_id, router_id):
+def new_task(task_id, router_id, code_bin):
     global MY_TASKS
     router_address = give_me_router_address(router_id)
     router_address += '/data_user/new_task/'
     router_address += str(MY_ID)
-    computer_id = str(requests.post(router_address, data = {'task_id' : str(task_id)}).text)
+    computer_id = str(requests.post(router_address, data = {'task_id' : str(task_id), 'code_bin' : code_bin}).text)
     MY_TASKS[task_id] = router_id
 
     FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Working task id ' + str(task_id) + ' to computer id ' + str(computer_id) + '\n')
 
     return str(computer_id)
 
-def end_task(task_id):
+def end_task(task_id, return_value):
     global MY_TASKS
     MY_TASKS.pop(task_id)
     FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
+
+    ret_fp = open('Test Files/calculated result.txt', 'w+')
+    ret_fp.write(return_value)
+    ret_fp.close()
 
 def print_all_task():
     global MY_TASKS

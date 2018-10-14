@@ -15,7 +15,7 @@ def heartbeat_from_computer(computer_id):
 
 @app.route('/computer/workingheartbeat/<computer_id>', methods = ['POST'])
 def heartbeat_from_working_computer(computer_id):
-    router_protocol.process_working_heartbeat(int(computer_id), int(request.form['localtime']), int(request.form['task_id']))
+    router_protocol.process_working_heartbeat(int(computer_id), int(request.form['localtime']), str(request.form['task_id']))
     return "Got Heartbeat"
 
 @app.route('/computer/work/<computer_id>', methods = ['POST'])
@@ -34,12 +34,12 @@ def allstatus():
 
 @app.route('/data_user/new_task/<data_user_id>', methods = ['POST'])
 def new_task(data_user_id):
-    computer_id = router_protocol.new_task(int(data_user_id), int(request.form['task_id']))
+    computer_id = router_protocol.new_task(int(data_user_id), str(request.form['task_id']), str(request.form['code_bin']))
     return str(computer_id)
 
 @app.route('/computer/end_task', methods = ['POST'])
 def end_task():
-    router_protocol.end_task(int(request.form['task_id']))
+    router_protocol.end_task(str(request.form['task_id']), str(request.form['return_value']))
     return 'Ended Task'
 
 @app.route('/search_available', methods = ['POST'])
@@ -48,7 +48,7 @@ def search_available():
 
 @app.route('/set_secret', methods = ['POST'])
 def set_secret():
-    return str(router_protocol.set_secret(request.form['secret']))
+    return str(router_protocol.set_secret(str(request.form['secret'])))
 
 def init():
     router_protocol.run(int(sys.argv[1]) - 5000)

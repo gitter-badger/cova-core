@@ -9,14 +9,14 @@ app = Flask(__name__)
 def hello():
     return 'Data User : Hello, World at port ' + sys.argv[1]
 
-@app.route('/new_task/<task_id>/<router_id>')
+@app.route('/new_task/<task_id>/<router_id>', methods = ['POST'])
 def new_task(task_id, router_id):
-    computer_id = data_user_protocol.new_task(int(task_id), int(router_id))
+    computer_id = data_user_protocol.new_task(str(task_id), int(router_id), str(request.form['code_bin']))
     return str(computer_id)
 
 @app.route('/end_task', methods = ['POST'])
 def end_task():
-	data_user_protocol.end_task(int(request.form['task_id']))
+	data_user_protocol.end_task(str(request.form['task_id']), str(request.form['return_value']))
 	return 'Got It'
 
 @app.route('/get_all_task')
