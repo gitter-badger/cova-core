@@ -1,7 +1,10 @@
 import requests, time, os, signal
 
-def new_task(router_id, task_id, code_bin):
-    return int(str(requests.post('http://localhost:' + str(5200) + '/new_task/' + str(task_id) + '/' + str(router_id), data = {'code_bin' : code_bin}).text))
+def new_task(router_id, task_id):
+    return int(str(requests.get('http://localhost:' + str(5200) + '/new_task/' + str(task_id) + '/' + str(router_id)).text))
+
+def start_task(computer_id, task_id, code):
+    requests.post('http://localhost:5200/start_task', data = {'computer_id' : str(computer_id), 'task_id' : str(task_id), 'code_bin' : str(code)})
 
 def load_code(file_path):
     fp = open(file_path, 'r')
@@ -17,8 +20,14 @@ def kill_computer(computer_id):
 
 task_id = 'noor148'
 
-code_bin = load_code('data_user_code.py')
+now_computer = new_task(0, task_id)
 
-now_computer = new_task(0, task_id, code_bin)
+code = load_code('data_user_code.py')
+
+start_task(now_computer, task_id, code)
 
 print(now_computer)
+
+time.sleep(15)
+
+kill_computer(now_computer)

@@ -9,15 +9,24 @@ app = Flask(__name__)
 def hello():
     return 'Data User : Hello, World at port ' + sys.argv[1]
 
-@app.route('/new_task/<task_id>/<router_id>', methods = ['POST'])
+@app.route('/new_task/<task_id>/<router_id>')
 def new_task(task_id, router_id):
-    computer_id = data_user_protocol.new_task(str(task_id), int(router_id), str(request.form['code_bin']))
+    computer_id = data_user_protocol.new_task(str(task_id), int(router_id))
     return str(computer_id)
+
+@app.route('/start_task', methods = ['POST'])
+def start_task():
+    data_user_protocol.start_task(str(request.form['code_bin']), str(request.form['task_id']), int(request.form['computer_id']))
+    return 'something'
+
+@app.route('/restart_task', methods = ['POST'])
+def restart_task():
+    data_user_protocol.restart_task(str(request.form['task_id']))
+    return 'restarted task'
 
 @app.route('/end_task', methods = ['POST'])
 def end_task():
-	data_user_protocol.end_task(str(request.form['task_id']), str(request.form['return_value']))
-	return 'Got It'
+	return data_user_protocol.end_task(str(request.form['task_id']), str(request.form['return_value']))
 
 @app.route('/get_all_task')
 def get_all_task():

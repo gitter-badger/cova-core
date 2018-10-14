@@ -11,7 +11,12 @@ def hello():
 
 @app.route('/new_task/<router_id>', methods = ['POST'])
 def new_task_post(router_id):
-    computer_protocol.goto_work(int(router_id), str(request.form['task_id']), str(request.form['code_bin']))
+    computer_protocol.wait_for_work(int(router_id), str(request.form['task_id']))
+    return 'waiting to work'
+
+@app.route('/goto_work', methods = ['POST'])
+def goto_work():
+    computer_protocol.goto_work(str(request.form['task_id']), str(request.form['code_bin']))
     return 'went to work'
 
 def init():

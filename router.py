@@ -34,7 +34,7 @@ def allstatus():
 
 @app.route('/data_user/new_task/<data_user_id>', methods = ['POST'])
 def new_task(data_user_id):
-    computer_id = router_protocol.new_task(int(data_user_id), str(request.form['task_id']), str(request.form['code_bin']))
+    computer_id = router_protocol.new_task(int(data_user_id), str(request.form['task_id']))
     return str(computer_id)
 
 @app.route('/computer/end_task', methods = ['POST'])

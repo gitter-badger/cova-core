@@ -6,6 +6,7 @@ MY_ID = 0
 IS_WORKING = False
 MY_TASK_ID = 0
 FP = 0
+MY_ROUTER_ID = 0
 
 def init(my_id):
     global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING, FP
@@ -33,8 +34,7 @@ def send_heartbeat():
         
         time.sleep(COMPUTER_HEARTBEAT_TIME)
 
-def temp_working(task_id, code_bin):
-
+def temp_working(code_bin):
     file_name = 'Code/code' + str(MY_ID) + '.py'
     code_fp = open(file_name, 'w+')
     code_fp.write(code_bin)
@@ -48,28 +48,38 @@ def temp_working(task_id, code_bin):
 
     ret_fp = open('Code/output.txt', 'r')
 
-    return str(ret_fp.read())
+    return ret_fp.read()
 
-def do_work(router_id, task_id, code_bin):
-    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID
+def wait_for_work(router_id, task_id):
+    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID
     IS_WORKING = True
     MY_TASK_ID = task_id
+    MY_ROUTER_ID = router_id
     HEARTBEAT_ROUTERS = [router_id]
 
-    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Starting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
+    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Waiting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
 
-    ret = temp_working(task_id, code_bin)
+def do_work(task_id, code):
 
-    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
+    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID
+
+    if(task_id != MY_TASK_ID):
+        return
+
+    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
+
+    ret = temp_working(code)
+
+    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
     
     IS_WORKING = False
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)
-    router_address = give_me_router_address(router_id)
+    router_address = give_me_router_address(MY_ROUTER_ID)
     router_address += '/computer/end_task'
-    requests.post(router_address, data = {'task_id' : str(task_id), 'return_value' : ret})
+    requests.post(router_address, data = {'task_id' : str(task_id), 'return_value' : str(ret)})
 
-def goto_work(router_id, task_id, code_bin):
-    thread.start_new_thread(do_work, (router_id, task_id, code_bin))
+def goto_work(task_id, code_bin):
+    thread.start_new_thread(do_work, (task_id, code_bin))
     
 def run(my_id):
     init(my_id)

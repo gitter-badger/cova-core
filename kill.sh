@@ -17,5 +17,7 @@ do
 done < "$filename"
 
 rm Log/*
+
 rm Code/*
+
 touch Code/__init__.py

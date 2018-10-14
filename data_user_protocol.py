@@ -10,32 +10,53 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/data_user.txt', 'a+', 0)
 
-def new_task(task_id, router_id, code_bin):
+def new_task(task_id, router_id):
     global MY_TASKS
     router_address = give_me_router_address(router_id)
     router_address += '/data_user/new_task/'
     router_address += str(MY_ID)
-    computer_id = str(requests.post(router_address, data = {'task_id' : str(task_id), 'code_bin' : code_bin}).text)
-    MY_TASKS[task_id] = router_id
+    computer_id = str(requests.post(router_address, data = {'task_id' : str(task_id)}).text)
+    MY_TASKS[task_id] = {}
+    MY_TASKS[task_id]['router_id'] = router_id
 
-    FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Working task id ' + str(task_id) + ' to computer id ' + str(computer_id) + '\n')
+    FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Assigning task id ' + str(task_id) + ' to computer id ' + str(computer_id) + '\n')
 
     return str(computer_id)
+
+def start_task(code_bin, task_id, computer_id):
+
+    print('In Data User Start Task')
+
+    global MY_TASKS
+
+    MY_TASKS[task_id]['code_bin'] = code_bin
+
+    computer_address = give_me_computer_address(computer_id)
+    computer_address += '/goto_work'
+
+    requests.post(computer_address, data = {'code_bin' : str(code_bin), 'task_id' : task_id})
 
 def end_task(task_id, return_value):
     global MY_TASKS
     MY_TASKS.pop(task_id)
     FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
+    return return_value
 
-    ret_fp = open('Test Files/calculated result.txt', 'w+')
-    ret_fp.write(return_value)
-    ret_fp.close()
+def restart_task(task_id):
+
+    FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Restarting task id ' + str(task_id) + '\n')
+
+    router_id = MY_TASKS[task_id]['router_id']
+    code_bin = MY_TASKS[task_id]['code_bin']
+    
+    computer_id = int(new_task(task_id, router_id))
+    start_task(code_bin, task_id, computer_id)
 
 def print_all_task():
     global MY_TASKS
     ret = 'All tasks : <br/>'
     for task_id in MY_TASKS:
-        ret += 'Task Number : %d working at Router Number : %d <br/>' % (task_id, MY_TASKS[task_id])
+        ret += 'Task Number : %s working at Router Number : %d <br/>' % (task_id, MY_TASKS[task_id])
     
     return ret
 
