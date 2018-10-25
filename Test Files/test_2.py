@@ -38,3 +38,7 @@ code = load_code('data_user_code.py')
 start_task(now_computer, task_id, code)
 
 print(now_computer)
+
+time.sleep(15)
+
+kill_computer(now_computer)
