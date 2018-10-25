@@ -5,3 +5,4 @@ protocol_const.pyc
 computer_logs.txt
 router_logs.txt
 data_user_logs.txt
+__pycache__
