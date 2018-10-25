@@ -37,7 +37,7 @@ def get_all_task():
 	return data_user_protocol.print_all_task()
 
 def init():
-    data_user_protocol.run(int(sys.argv[1]) - 5200)
+    data_user_protocol.run(int(sys.argv[1]) - 12000)
 
 def flaskThread():
     app.run(port = sys.argv[1])

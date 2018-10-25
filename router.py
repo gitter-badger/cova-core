@@ -55,7 +55,7 @@ def set_secret():
     return str(router_protocol.set_secret(str(request.form['secret'])))
 
 def init():
-    router_protocol.run(int(sys.argv[1]) - 5000)
+    router_protocol.run(int(sys.argv[1]) - 10000)
 
 def flaskThread():
     app.run(port = sys.argv[1])

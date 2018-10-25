@@ -7,7 +7,7 @@ def new_task(router_id, task_id):
     return int(str(requests.get('http://localhost:' + str(12000) + '/new_task/' + str(task_id) + '/' + str(router_id)).text))
 
 def start_task(computer_id, task_id, code):
-    requests.post('http://localhost:5200/start_task', data = {'computer_id' : str(computer_id), 'task_id' : str(task_id), 'code_bin' : str(code)})
+    requests.post('http://localhost:12000/start_task', data = {'computer_id' : str(computer_id), 'task_id' : str(task_id), 'code_bin' : str(code)})
 
 def load_code(file_path):
     fp = open(file_path, 'r')

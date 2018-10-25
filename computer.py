@@ -20,7 +20,7 @@ def goto_work():
     return 'went to work'
 
 def init():
-    computer_protocol.run(int(sys.argv[1]) - 5100)
+    computer_protocol.run(int(sys.argv[1]) - 11000)
 
 def flaskThread():
     app.run(port = sys.argv[1])
