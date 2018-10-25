@@ -1,5 +1,5 @@
 from protocol_const import *
-import time, thread, requests
+import time, thread, requests, json
 from collections import deque
 from datetime import datetime
 from sets import Set
@@ -12,6 +12,7 @@ WORKING_COMPUTERS_DEQUE = deque()
 MY_TASK = {}
 MY_SECRET = 0
 FP = 0
+PENDING_TASK = {}
 
 UNDER_MY_WORKING = Set()
 
@@ -81,7 +82,37 @@ def search_for_available_computer():
             continue
         return int(computer_id)
 
+def task_id_generator():
+    return str(randint(0, 100000))
+
+def cost_function(timeout):
+    return 100
+
+def init_task(data_user_id, timeout):
+
+    global PENDING_TASK
+    task_id = task_id_generator()
+
+    cost = cost_function(timeout)
+
+    PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout}
+
+    return json.dumps({'task_id' : task_id, 'cost' : cost})
+
+def check_for_agreement(data_user_id, task_id):
+
+    if task_id in MY_TASK:
+        return True
+
+    if task_id not in PENDING_TASK:
+        return False
+
+    return True
+
 def new_task(data_user_id, task_id):
+
+    if not check_for_agreement(data_user_id, task_id):
+        return 'None'
 
     global UNDER_MY_WORKING, MY_TASK
 

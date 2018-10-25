@@ -32,6 +32,10 @@ def finish_working_post(computer_id):
 def allstatus():
     return router_protocol.return_all_status()
 
+@app.route('/data_user/init_task/<data_user_id>', methods = ['POST'])
+def init_task(data_user_id):
+    return router_protocol.init_task(int(data_user_id), int(request.form['timeout']))
+
 @app.route('/data_user/new_task/<data_user_id>', methods = ['POST'])
 def new_task(data_user_id):
     computer_id = router_protocol.new_task(int(data_user_id), str(request.form['task_id']))

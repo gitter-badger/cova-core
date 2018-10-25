@@ -1,5 +1,5 @@
 from protocol_const import *
-import time, thread, requests
+import time, thread, requests, json
 
 MY_ID = 0
 MY_TASKS = {}
@@ -10,12 +10,23 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/data_user.txt', 'a+', 0)
 
+def init_task(router_id, timeout):
+    router_address = give_me_router_address(router_id)
+    router_address += '/data_user/init_task/'
+    router_address += str(MY_ID)
+    ret = requests.post(router_address, data = {'timeout' : str(timeout)}).text
+    return json.dumps(json.loads(ret))
+
 def new_task(task_id, router_id):
     global MY_TASKS
     router_address = give_me_router_address(router_id)
     router_address += '/data_user/new_task/'
     router_address += str(MY_ID)
     computer_id = str(requests.post(router_address, data = {'task_id' : str(task_id)}).text)
+
+    if(computer_id == 'None'):
+        return 'None'
+
     MY_TASKS[task_id] = {}
     MY_TASKS[task_id]['router_id'] = router_id
 
@@ -36,10 +47,16 @@ def start_task(code_bin, task_id, computer_id):
 
     requests.post(computer_address, data = {'code_bin' : str(code_bin), 'task_id' : task_id})
 
+def print_output(task_id, return_value):
+    fp = open('Test Files/task_id_' + str(task_id) + '.txt', 'w')
+    fp.write(return_value)
+    fp.close()
+
 def end_task(task_id, return_value):
     global MY_TASKS
     MY_TASKS.pop(task_id)
     FP.write(give_me_time() + 'DATA USER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
+    print_output(task_id, return_value)
     return return_value
 
 def restart_task(task_id):

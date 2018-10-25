@@ -9,6 +9,10 @@ app = Flask(__name__)
 def hello():
     return 'Data User : Hello, World at port ' + sys.argv[1]
 
+@app.route('/init_task/<router_id>', methods = ['POST'])
+def init_task(router_id):
+    return data_user_protocol.init_task(int(router_id), int(request.form['timeout']))
+
 @app.route('/new_task/<task_id>/<router_id>')
 def new_task(task_id, router_id):
     computer_id = data_user_protocol.new_task(str(task_id), int(router_id))
