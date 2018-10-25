@@ -1,5 +1,5 @@
 echo $PPID > data_user_logs.txt
-port=5200
+port=12000
 for value in {1..1}
 do
     python data_user.py $port &

@@ -20,13 +20,13 @@ def give_me_random_routers(computer_id):
     return random_router
 
 def give_me_router_address(router_id):
-    return 'http://localhost:' + str(5000 + router_id)
+    return 'http://localhost:' + str(10000 + router_id)
     
 def give_me_computer_address(computer_id):
-    return 'http://localhost:' + str(5100 + computer_id)
+    return 'http://localhost:' + str(11000 + computer_id)
 
 def give_me_data_user_address(data_user_id):
-    return 'http://localhost:' + str(5200 + data_user_id)
+    return 'http://localhost:' + str(12000 + data_user_id)
 
 def give_me_time_counter():
     return int(time.mktime(datetime.now().timetuple()))

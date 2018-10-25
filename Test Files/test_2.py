@@ -1,10 +1,10 @@
 import requests, time, os, signal, json
 
 def init_task(router_id, timeout):
-    return requests.post('http://localhost:' + str(5200) + '/init_task/' + str(router_id), data = {'timeout' : timeout}).text
+    return requests.post('http://localhost:' + str(12000) + '/init_task/' + str(router_id), data = {'timeout' : timeout}).text
 
 def new_task(router_id, task_id):
-    return int(str(requests.get('http://localhost:' + str(5200) + '/new_task/' + str(task_id) + '/' + str(router_id)).text))
+    return int(str(requests.get('http://localhost:' + str(12000) + '/new_task/' + str(task_id) + '/' + str(router_id)).text))
 
 def start_task(computer_id, task_id, code):
     requests.post('http://localhost:5200/start_task', data = {'computer_id' : str(computer_id), 'task_id' : str(task_id), 'code_bin' : str(code)})
