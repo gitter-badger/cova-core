@@ -163,6 +163,8 @@ def get_data_link(datahash):
         print('Cannot Get Datahash in get_data_link')
         return 'sad.com'
 
+    ret = json.loads(ret)
+
     try:
         ret = ret['metadata']['metadata']['data_link']
     except:
