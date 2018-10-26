@@ -40,7 +40,7 @@ def init():
     data_user_protocol.run(int(sys.argv[1]) - 12000)
 
 def flaskThread():
-    app.run(port = sys.argv[1])
+    app.run(host = '0.0.0.0', port = sys.argv[1])
     
 if __name__ == "__main__":
     thread.start_new_thread(flaskThread, ())
