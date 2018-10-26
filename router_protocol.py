@@ -194,6 +194,9 @@ def new_task(data_user_id, task_id):
         return 'None'
 
     computer_id = search_for_available_computer()
+    
+    key_fragments = give_me_key_fragments(datahash)
+    key_fragments = json.dumps(key_fragments)
 
     UNDER_MY_WORKING.add(computer_id)
     computer_address = give_me_computer_address(computer_id)
@@ -204,9 +207,6 @@ def new_task(data_user_id, task_id):
 
     if task_id in PENDING_TASK:
         PENDING_TASK.pop(task_id)
-
-    key_fragments = give_me_key_fragments(datahash)
-    key_fragments = json.dumps(key_fragments)
 
     try:
         requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash, 'key_fragments' : str(key_fragments)})
