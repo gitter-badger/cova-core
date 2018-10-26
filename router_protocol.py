@@ -99,14 +99,19 @@ def init_task(data_user_id, timeout):
 
     PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout}
 
+    print(PENDING_TASK)
+
     return json.dumps({'task_id' : task_id, 'cost' : cost})
 
 def check_for_agreement(data_user_id, task_id):
+
+    global PENDING_TASK
 
     if task_id in MY_TASK:
         return True
 
     if task_id not in PENDING_TASK:
+        print('Task Id Is not in Pending Task')
         return False
 
     return True
