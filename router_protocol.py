@@ -123,8 +123,6 @@ def check_for_agreement(data_user_id, task_id):
         print('Task Id Is not in Pending Task')
         return False
 
-    return True
-
     address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
     print(address)
@@ -147,6 +145,12 @@ def check_for_agreement(data_user_id, task_id):
 
     if(int(str(ret['2']))<PENDING_TASK[task_id]['cost']):
         print('Agreement is not created')
+        return False
+
+    datahash = PENDING_TASK[task_id]['datahash']
+
+    if(str(ret['1']) != datahash):
+        print('Datahash is not same')
         return False
 
     return True
