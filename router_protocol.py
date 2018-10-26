@@ -29,10 +29,7 @@ def init(my_id):
     address = 'http://localhost:5002/create_cred/' + str(MY_ID)
 
     CREDENTIALS = requests.get(address).text
-    print(CREDENTIALS)
     CREDENTIALS = json.loads(CREDENTIALS)
-
-    print(CREDENTIALS)
 
 def make_computer_available(computer_id):
     global AVAIBILITY_LIST
@@ -173,7 +170,7 @@ def dec_key_fragment(datahash):
 
     global MY_ID
 
-    address = 'localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
+    address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
 
     try:
         ret = requests.get(address).text
@@ -189,7 +186,7 @@ def dec_key_fragment(datahash):
 
     ret = str(ret['keyfrag'])
 
-    address = 'localhost:5002/decrypt'
+    address = 'http://localhost:5002/decrypt'
 
     try:
         private_key = str(CREDENTIALS['rsa_cred']['privateKey'])
