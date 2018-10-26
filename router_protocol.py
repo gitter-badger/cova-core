@@ -117,9 +117,17 @@ def check_for_agreement(data_user_id, task_id):
     address = 'localhost:5000/payment/seeAgreement/' + task_id
 
     try:
-        ret = json.loads(requests.get(address).text)
+        ret = requests.get(address).text
     except:
         print('Could not connect to agreement')
+        return False
+
+    print(ret)
+
+    try:
+        ret = json.loads(ret)
+    except:
+        print('Could not convert')
         return False
 
     print(ret)
