@@ -9,6 +9,7 @@ FP = 0
 MY_ROUTER_ID = 0
 MY_DATAHASH = ""
 MY_KEY_FRAGMENTS = []
+MY_DATA_LINK = ""
 
 def init(my_id):
     global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING, FP
@@ -59,14 +60,17 @@ def temp_working(code_bin):
 
     ret += str('\n' + str(MY_KEY_FRAGMENTS))
 
+    ret += str('\n' + str(MY_DATA_LINK) + '\n')
+
     return ret
 
-def wait_for_work(router_id, task_id, datahash, key_fragments):
-    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS
+def wait_for_work(router_id, task_id, datahash, key_fragments, data_link):
+    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS, MY_DATA_LINK
     IS_WORKING = True
     MY_TASK_ID = task_id
     MY_ROUTER_ID = router_id
     MY_DATAHASH = datahash
+    MY_DATA_LINK = data_link
 
     MY_KEY_FRAGMENTS = json.loads(key_fragments)
     MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]

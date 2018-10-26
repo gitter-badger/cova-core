@@ -152,6 +152,25 @@ def check_for_agreement(data_user_id, task_id):
 
     return True
 
+def get_data_link(datahash):
+    global MY_ID
+
+    address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
+
+    try:
+        ret = requests.get(address).text
+    except:
+        print('Cannot Get Datahash in get_data_link')
+        return 'sad.com'
+
+    try:
+        ret = ret['metadata']['metadata']['data_link']
+    except:
+        print('Cannot retrieve in get_data_link')
+        return 'sad.com'
+
+    return str(ret)
+
 def give_me_key_fragments(datahash):
 
     start_node = random.randint(0, NUMBER_OF_ROUTERS - 1)
@@ -225,6 +244,7 @@ def new_task(data_user_id, task_id):
 
     key_fragments = give_me_key_fragments(datahash)
     key_fragments = json.dumps(key_fragments)
+    data_link = get_data_link(datahash)
 
     UNDER_MY_WORKING.add(computer_id)
     computer_address = give_me_computer_address(computer_id)
@@ -237,7 +257,7 @@ def new_task(data_user_id, task_id):
         PENDING_TASK.pop(task_id)
 
     try:
-        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash, 'key_fragments' : str(key_fragments)})
+        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash, 'key_fragments' : str(key_fragments), 'data_link' : str(data_link)})
     except:
         MY_TASK.pop(task_id)
         new_task(data_user_id, task_id)
