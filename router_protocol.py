@@ -26,9 +26,7 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
 
-    return
-
-    address = 'http://localhost:5002/create_cred'
+    address = 'http://localhost:5002/create_cred/' + str(MY_ID)
 
     CREDENTIALS = requests.get(address).text
     print(CREDENTIALS)
@@ -124,8 +122,6 @@ def check_for_agreement(data_user_id, task_id):
     if task_id not in PENDING_TASK:
         print('Task Id Is not in Pending Task')
         return False
-
-    return True
 
     address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
