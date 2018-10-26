@@ -116,6 +116,8 @@ def check_for_agreement(data_user_id, task_id):
 
     address = 'localhost:5000/payment/seeAgreement/' + task_id
 
+    print(address)
+
     try:
         ret = requests.get(address).text
     except:
