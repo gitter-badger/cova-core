@@ -114,7 +114,7 @@ def check_for_agreement(data_user_id, task_id):
         print('Task Id Is not in Pending Task')
         return False
 
-    address = 'localhost:5000/payment/seeAgreement/' + task_id
+    address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
     print(address)
 
