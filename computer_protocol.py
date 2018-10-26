@@ -1,5 +1,6 @@
 from protocol_const import *
 import time, thread, requests, importlib, json
+from secretsharing import SecretSharer
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -37,6 +38,25 @@ def send_heartbeat():
         
         time.sleep(COMPUTER_HEARTBEAT_TIME)
 
+def decrypt_secret(fragments):
+
+    total_fragment = fragments[0].count('^') + 1
+
+    data = [[] for _ in range(total_fragment)]
+
+    for line in fragments:
+        temp = line.split('^')
+
+        for i in range(total_fragment):
+            data[i].append(temp[i])
+       
+    key = ""
+
+    for i in range(total_fragment):
+        key += SecretSharer.recover_secret(data[i])
+
+    return str(key)
+
 def temp_working(code_bin):
 
     global MY_DATAHASH
@@ -61,6 +81,8 @@ def temp_working(code_bin):
     ret += str('\n' + str(MY_KEY_FRAGMENTS))
 
     ret += str('\n' + str(MY_DATA_LINK) + '\n')
+
+    ret += str(decrypt_secret(str(MY_KEY_FRAGMENTS)) + '\n')
 
     return ret
 
