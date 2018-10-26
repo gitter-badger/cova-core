@@ -40,12 +40,14 @@ def send_heartbeat():
 
 def decrypt_secret(fragments):
 
-    total_fragment = fragments[0].count('^') + 1
+    total_fragment = str(fragments[0]).count('^') + 1
 
     data = [[] for _ in range(total_fragment)]
 
     for line in fragments:
-        temp = line.split('^')
+        temp = str(line).split('^')
+
+        print(type(line), temp)
 
         for i in range(total_fragment):
             data[i].append(temp[i])
