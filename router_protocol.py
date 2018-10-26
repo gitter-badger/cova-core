@@ -26,9 +26,11 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
 
-    address = 'http://localhost:5002/create/cred'
+    address = 'http://localhost:5002/create_cred'
 
-    CREDENTIALS = json.loads(requests.get(address).text)
+    CREDENTIALS = requests.get(address).text
+    print(CREDENTIALS)
+    CREDENTIALS = json.loads(CREDENTIALS)
 
     print(CREDENTIALS)
 
