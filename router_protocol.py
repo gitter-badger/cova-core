@@ -1,9 +1,8 @@
 from protocol_const import *
-import time, thread, requests, json
+import time, thread, requests, json, random, hashlib, string
 from collections import deque
 from datetime import datetime
 from sets import Set
-from random import randint
 
 MY_ID = 0
 AVAILABILITY_LIST = [True] * NUMBER_OF_COMPUTERS
@@ -74,7 +73,7 @@ def search_for_available_computer():
     computer_id = 'None'
 
     while True:
-        random_router_id = randint(0, NUMBER_OF_ROUTERS - 1)
+        random_router_id = random.randint(0, NUMBER_OF_ROUTERS - 1)
         router_address = give_me_router_address(random_router_id)
         router_address += '/search_available'
         computer_id = str(requests.post(router_address).text)
@@ -83,7 +82,10 @@ def search_for_available_computer():
         return int(computer_id)
 
 def task_id_generator():
-    return str(randint(0, 100000))
+    letters = string.ascii_lowercase
+    random_string = ''.join(random.choice(letters) for i in range(30))
+    random_string += str(time.clock())
+    return str(hashlib.sha256(random_string).hexdigest())
 
 def cost_function(timeout):
     return 100
