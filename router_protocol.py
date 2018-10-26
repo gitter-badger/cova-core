@@ -114,11 +114,14 @@ def check_for_agreement(data_user_id, task_id):
         print('Task Id Is not in Pending Task')
         return False
 
-    address = 'localhost:5000/payment/checkAgreement/' + task_id
+    address = 'localhost:5000/payment/seeAgreement/' + task_id
 
-    ret = requests.get(address).text
+    ret = json.loads(requests.get(address).text)
 
     print(ret)
+
+    if(int(str(ret['2']))<PENDING_TASK[task_id]['cost']):
+        return False
 
     return True
 
