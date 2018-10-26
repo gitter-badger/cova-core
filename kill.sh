@@ -21,3 +21,5 @@ rm Log/*
 rm Code/*
 
 touch Code/__init__.py
+
+curl localhost:5002/clear_all

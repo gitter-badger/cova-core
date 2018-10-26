@@ -12,6 +12,7 @@ MY_TASK = {}
 MY_SECRET = 0
 FP = 0
 PENDING_TASK = {}
+CREDENTIALS = {}
 
 UNDER_MY_WORKING = Set()
 
@@ -21,9 +22,15 @@ def set_secret(secret):
     return 'Got Secret'
 
 def init(my_id):
-    global MY_ID, FP
+    global MY_ID, FP, CREDENTIALS
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
+
+    address = 'localhost:5002/create/cred'
+
+    CREDENTIALS = json.loads(requests.get(address))
+
+    print(CREDENTIALS)
 
 def make_computer_available(computer_id):
     global AVAIBILITY_LIST
