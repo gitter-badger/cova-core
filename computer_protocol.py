@@ -44,10 +44,12 @@ def decrypt_secret(fragments):
 
     data = [[] for _ in range(total_fragment)]
 
+    print(fragments)
+
     for line in fragments:
         temp = str(line).split('^')
 
-        print(type(line), temp)
+        print(line, temp)
 
         for i in range(total_fragment):
             data[i].append(temp[i])
