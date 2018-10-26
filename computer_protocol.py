@@ -44,12 +44,8 @@ def decrypt_secret(fragments):
 
     data = [[] for _ in range(total_fragment)]
 
-    print(fragments)
-
     for line in fragments:
         temp = str(line).split('^')
-
-        print(line, temp)
 
         for i in range(total_fragment):
             data[i].append(temp[i])
@@ -86,7 +82,7 @@ def temp_working(code_bin):
 
     ret += str('\n' + str(MY_DATA_LINK) + '\n')
 
-    ret += str(decrypt_secret(str(MY_KEY_FRAGMENTS)) + '\n')
+    ret += str(decrypt_secret(MY_KEY_FRAGMENTS) + '\n')
 
     return ret
 
