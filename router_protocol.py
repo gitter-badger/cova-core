@@ -171,8 +171,39 @@ def give_me_key_fragments(datahash):
 
 def dec_key_fragment(datahash):
 
+    global MY_ID
 
-    return datahash + str(MY_ID)
+    address = 'localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
+
+    try:
+        ret = requests.get(address).text
+    except:
+        print('Key Fragment Getting Error')
+        return datahash + str(MY_ID)
+
+    ret = json.loads(ret)
+
+    if not ret['success']:
+        print('Key Fragment Not Present')
+        return datahash + str(MY_ID)
+
+    ret = str(ret['keyfrag'])
+
+    address = 'localhost:5002/decrypt'
+
+    try:
+        private_key = str(CREDENTIALS['rsa_cred']['privateKey'])
+    except:
+        print('Private Key Parsing Error')
+        return datahash + str(MY_ID)
+
+    try:
+        ret = str(requests.post(address, data = {'enc_data' : ret, 'private_key' : private_key}).text)
+    except:
+        print('Decryption Error')
+        return datahash + str(MY_ID)
+
+    return ret
 
 def new_task(data_user_id, task_id):
 
@@ -194,7 +225,7 @@ def new_task(data_user_id, task_id):
         return 'None'
 
     computer_id = search_for_available_computer()
-    
+
     key_fragments = give_me_key_fragments(datahash)
     key_fragments = json.dumps(key_fragments)
 
