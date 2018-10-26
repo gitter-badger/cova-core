@@ -83,9 +83,9 @@ def search_for_available_computer():
 
 def task_id_generator():
     letters = string.ascii_lowercase
-    random_string = ''.join(random.choice(letters) for i in range(30))
-    random_string += str(time.clock())
-    return str(hashlib.sha256(random_string).hexdigest())
+    random_string = str(time.clock())
+    random_string += ''.join(random.choice(letters) for i in range(30))
+    return random_string
 
 def cost_function(timeout):
     return 100
