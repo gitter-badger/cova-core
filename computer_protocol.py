@@ -1,5 +1,5 @@
 from protocol_const import *
-import time, thread, requests, importlib
+import time, thread, requests, importlib, json
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -8,6 +8,7 @@ MY_TASK_ID = 0
 FP = 0
 MY_ROUTER_ID = 0
 MY_DATAHASH = ""
+MY_KEY_FRAGMENTS = []
 
 def init(my_id):
     global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING, FP
@@ -56,14 +57,20 @@ def temp_working(code_bin):
 
     ret += str('\n' + str(MY_DATAHASH))
 
+    ret += str('\n' + str(MY_KEY_FRAGMENTS))
+
     return ret
 
-def wait_for_work(router_id, task_id, datahash):
-    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH
+def wait_for_work(router_id, task_id, datahash, key_fragments):
+    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS
     IS_WORKING = True
     MY_TASK_ID = task_id
     MY_ROUTER_ID = router_id
     MY_DATAHASH = datahash
+
+    MY_KEY_FRAGMENTS = json.loads(key_fragments)
+    MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]
+
     HEARTBEAT_ROUTERS = [router_id]
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Waiting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')

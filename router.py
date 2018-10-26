@@ -50,9 +50,9 @@ def end_task():
 def search_available():
     return str(router_protocol.give_me_available_computer())
 
-@app.route('/set_secret', methods = ['POST'])
-def set_secret():
-    return str(router_protocol.set_secret(str(request.form['secret'])))
+@app.route('/dec_key_fragment', methods = ['POST'])
+def dec_key_fragment():
+    return router_protocol.dec_key_fragment(str(request.form['datahash']))
 
 def init():
     router_protocol.run(int(sys.argv[1]) - 10000)

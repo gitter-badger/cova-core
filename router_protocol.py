@@ -26,6 +26,8 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
 
+    return
+
     address = 'http://localhost:5002/create_cred'
 
     CREDENTIALS = requests.get(address).text
@@ -123,6 +125,8 @@ def check_for_agreement(data_user_id, task_id):
         print('Task Id Is not in Pending Task')
         return False
 
+    return True
+
     address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
     print(address)
@@ -155,6 +159,25 @@ def check_for_agreement(data_user_id, task_id):
 
     return True
 
+def give_me_key_fragments(datahash):
+
+    start_node = random.randint(0, NUMBER_OF_ROUTERS - 1)
+    ret = []
+
+    for i in range(SECRET_NUM):
+        router_id = (start_node + i) % NUMBER_OF_ROUTERS
+        address = give_me_router_address(router_id)
+        address += '/dec_key_fragment'
+        dec_key_fragment = str(requests.post(address, data = {'datahash' : datahash}).text)
+        ret.append(dec_key_fragment)
+
+    return ret
+
+def dec_key_fragment(datahash):
+
+
+    return datahash + str(MY_ID)
+
 def new_task(data_user_id, task_id):
 
     if not check_for_agreement(data_user_id, task_id):
@@ -186,8 +209,11 @@ def new_task(data_user_id, task_id):
     if task_id in PENDING_TASK:
         PENDING_TASK.pop(task_id)
 
+    key_fragments = give_me_key_fragments(datahash)
+    key_fragments = json.dumps(key_fragments)
+
     try:
-        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash})
+        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash, 'key_fragments' : str(key_fragments)})
     except:
         MY_TASK.pop(task_id)
         new_task(data_user_id, task_id)
