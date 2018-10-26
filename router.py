@@ -34,7 +34,7 @@ def allstatus():
 
 @app.route('/data_user/init_task/<data_user_id>', methods = ['POST'])
 def init_task(data_user_id):
-    return router_protocol.init_task(int(data_user_id), int(request.form['timeout']))
+    return router_protocol.init_task(int(data_user_id), int(request.form['timeout']), str(request.form['datahash']))
 
 @app.route('/data_user/new_task/<data_user_id>', methods = ['POST'])
 def new_task(data_user_id):

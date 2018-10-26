@@ -1,7 +1,7 @@
 import requests, time, os, signal, json
 
-def init_task(router_id, timeout):
-    return requests.post('http://localhost:' + str(12000) + '/init_task/' + str(router_id), data = {'timeout' : timeout}).text
+def init_task(router_id, timeout, datahash):
+    return requests.post('http://localhost:' + str(12000) + '/init_task/' + str(router_id), data = {'timeout' : timeout, 'datahash' : datahash}).text
 
 def new_task(router_id, task_id):
     return int(str(requests.get('http://localhost:' + str(12000) + '/new_task/' + str(task_id) + '/' + str(router_id)).text))
@@ -21,7 +21,9 @@ COMPUTER_ID = [int(i) for i in COMPUTER_ID]
 def kill_computer(computer_id):
     os.kill(COMPUTER_ID[computer_id + 1], signal.SIGKILL)
 
-ret = json.loads(init_task(1, 15))
+datahash = 'nadimgukhay'
+
+ret = json.loads(init_task(1, 15, datahash))
 
 print(type(ret))
 print(ret)

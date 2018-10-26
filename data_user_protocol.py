@@ -10,11 +10,11 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/data_user.txt', 'a+', 0)
 
-def init_task(router_id, timeout):
+def init_task(router_id, timeout, datahash):
     router_address = give_me_router_address(router_id)
     router_address += '/data_user/init_task/'
     router_address += str(MY_ID)
-    ret = requests.post(router_address, data = {'timeout' : str(timeout)}).text
+    ret = requests.post(router_address, data = {'timeout' : str(timeout), 'datahash' : datahash}).text
     return json.dumps(json.loads(ret))
 
 def new_task(task_id, router_id):

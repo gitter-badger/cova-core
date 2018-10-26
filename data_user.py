@@ -11,7 +11,7 @@ def hello():
 
 @app.route('/init_task/<router_id>', methods = ['POST'])
 def init_task(router_id):
-    return data_user_protocol.init_task(int(router_id), int(request.form['timeout']))
+    return data_user_protocol.init_task(int(router_id), int(request.form['timeout']), str(request.form['datahash']))
 
 @app.route('/new_task/<task_id>/<router_id>')
 def new_task(task_id, router_id):

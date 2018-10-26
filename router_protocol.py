@@ -90,14 +90,14 @@ def task_id_generator():
 def cost_function(timeout):
     return 100
 
-def init_task(data_user_id, timeout):
+def init_task(data_user_id, timeout, datahash):
 
     global PENDING_TASK
     task_id = task_id_generator()
 
     cost = cost_function(timeout)
 
-    PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout}
+    PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout, 'datahash' : datahash}
 
     print(PENDING_TASK)
 
@@ -113,6 +113,8 @@ def check_for_agreement(data_user_id, task_id):
     if task_id not in PENDING_TASK:
         print('Task Id Is not in Pending Task')
         return False
+
+    return True
 
     address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
@@ -145,7 +147,19 @@ def new_task(data_user_id, task_id):
     if not check_for_agreement(data_user_id, task_id):
         return 'None'
 
-    global UNDER_MY_WORKING, MY_TASK
+    global UNDER_MY_WORKING, MY_TASK, PENDING_TASK
+
+    if task_id in MY_TASK:
+        cost = MY_TASK[task_id]['cost']
+        timeout = MY_TASK[task_id]['timeout']
+        datahash = MY_TASK[task_id]['datahash']
+    elif task_id in PENDING_TASK:
+        cost = PENDING_TASK[task_id]['cost']
+        timeout = PENDING_TASK[task_id]['timeout']
+        datahash = PENDING_TASK[task_id]['datahash']
+    else:
+        print('DataHash Not Found in Routing Node')
+        return 'None'
 
     computer_id = search_for_available_computer()
 
@@ -154,10 +168,13 @@ def new_task(data_user_id, task_id):
     computer_address += '/new_task/'
     computer_address += str(MY_ID)
 
-    MY_TASK[task_id] = {'data_user_id' : data_user_id, 'computer_id' : computer_id, 'heartbeat' : give_me_time_counter()}
+    MY_TASK[task_id] = {'data_user_id' : data_user_id, 'computer_id' : computer_id, 'heartbeat' : give_me_time_counter(), 'datahash' : datahash, 'cost' : cost, 'timeout' : timeout}
+
+    if task_id in PENDING_TASK:
+        PENDING_TASK.pop(task_id)
 
     try:
-        requests.post(computer_address, data = {'task_id' : str(task_id)})
+        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash})
     except:
         MY_TASK.pop(task_id)
         new_task(data_user_id, task_id)
@@ -182,8 +199,14 @@ def end_task(task_id, return_value, notify_data_user = True):
 
     computer_id = MY_TASK[task_id]['computer_id']
     data_user_id = MY_TASK[task_id]['data_user_id']
+    cost = MY_TASK[task_id]['cost']
+    timeout = MY_TASK[task_id]['timeout']
+    datahash = MY_TASK[task_id]['datahash']
 
     UNDER_MY_WORKING.remove(computer_id)
+
+    if not notify_data_user:
+        PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout, 'datahash' : datahash}
 
     MY_TASK.pop(task_id)
 

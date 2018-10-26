@@ -7,6 +7,7 @@ IS_WORKING = False
 MY_TASK_ID = 0
 FP = 0
 MY_ROUTER_ID = 0
+MY_DATAHASH = ""
 
 def init(my_id):
     global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING, FP
@@ -35,6 +36,9 @@ def send_heartbeat():
         time.sleep(COMPUTER_HEARTBEAT_TIME)
 
 def temp_working(code_bin):
+
+    global MY_DATAHASH
+
     file_name = 'Code/code' + str(MY_ID) + '.py'
     code_fp = open(file_name, 'w+')
     code_fp.write(code_bin)
@@ -48,13 +52,18 @@ def temp_working(code_bin):
 
     ret_fp = open('Code/output.txt', 'r')
 
-    return ret_fp.read()
+    ret = ret_fp.read()
 
-def wait_for_work(router_id, task_id):
-    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID
+    ret += str('\n' + str(MY_DATAHASH))
+
+    return ret
+
+def wait_for_work(router_id, task_id, datahash):
+    global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH
     IS_WORKING = True
     MY_TASK_ID = task_id
     MY_ROUTER_ID = router_id
+    MY_DATAHASH = datahash
     HEARTBEAT_ROUTERS = [router_id]
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Waiting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
