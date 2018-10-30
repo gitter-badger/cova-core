@@ -1,6 +1,7 @@
 from protocol_const import *
 import time, thread, requests, importlib, json
 from secretsharing import SecretSharer
+import random
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -37,6 +38,20 @@ def send_heartbeat():
                 requests.post(router_address, data = {'localtime' : str(now_time)})
         
         time.sleep(COMPUTER_HEARTBEAT_TIME)
+
+def give_me_key_fragments(datahash):
+
+    start_node = random.randint(0, NUMBER_OF_ROUTERS - 1)
+    ret = []
+
+    for i in range(SECRET_NUM):
+        router_id = (start_node + i) % NUMBER_OF_ROUTERS
+        address = give_me_router_address(router_id)
+        address += '/dec_key_fragment'
+        dec_key_fragment = str(requests.post(address, data = {'datahash' : datahash}).text)
+        ret.append(dec_key_fragment)
+
+    return ret
 
 def decrypt_secret(fragments):
 
@@ -86,7 +101,7 @@ def temp_working(code_bin):
 
     return ret
 
-def wait_for_work(router_id, task_id, datahash, key_fragments, data_link):
+def wait_for_work(router_id, task_id, datahash, data_link):
     global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS, MY_DATA_LINK
     IS_WORKING = True
     MY_TASK_ID = task_id
@@ -94,7 +109,7 @@ def wait_for_work(router_id, task_id, datahash, key_fragments, data_link):
     MY_DATAHASH = datahash
     MY_DATA_LINK = data_link
 
-    MY_KEY_FRAGMENTS = json.loads(key_fragments)
+    MY_KEY_FRAGMENTS = give_me_key_fragments(datahash)
     MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]
 
     HEARTBEAT_ROUTERS = [router_id]

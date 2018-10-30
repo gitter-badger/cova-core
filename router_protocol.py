@@ -173,20 +173,6 @@ def get_data_link(datahash):
 
     return str(ret)
 
-def give_me_key_fragments(datahash):
-
-    start_node = random.randint(0, NUMBER_OF_ROUTERS - 1)
-    ret = []
-
-    for i in range(SECRET_NUM):
-        router_id = (start_node + i) % NUMBER_OF_ROUTERS
-        address = give_me_router_address(router_id)
-        address += '/dec_key_fragment'
-        dec_key_fragment = str(requests.post(address, data = {'datahash' : datahash}).text)
-        ret.append(dec_key_fragment)
-
-    return ret
-
 def dec_key_fragment(datahash):
 
     global MY_ID
@@ -244,8 +230,6 @@ def new_task(data_user_id, task_id):
 
     computer_id = search_for_available_computer()
 
-    key_fragments = give_me_key_fragments(datahash)
-    key_fragments = json.dumps(key_fragments)
     data_link = get_data_link(datahash)
 
     UNDER_MY_WORKING.add(computer_id)
@@ -259,7 +243,7 @@ def new_task(data_user_id, task_id):
         PENDING_TASK.pop(task_id)
 
     try:
-        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash, 'key_fragments' : str(key_fragments), 'data_link' : str(data_link)})
+        requests.post(computer_address, data = {'task_id' : str(task_id), 'datahash' : datahash, 'data_link' : str(data_link)})
     except:
         MY_TASK.pop(task_id)
         new_task(data_user_id, task_id)
