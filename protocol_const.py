@@ -1,22 +1,29 @@
 NUMBER_OF_ROUTERS = 3
-NUMBER_OF_COMPUTERS = 6
+NUMBER_OF_COMPUTERS = 100
 HEARTBEAT_ROUTER_COUNT = 2
 COMPUTER_HEARTBEAT_TIME = 5
 HEARTBEAT_CLEAR_TIME = 15
 WORKING_COMPUTER_DETECTION_TIME = 15
 SECRET_NUM = 2
 
-import hashlib, time
+import hashlib, time, string, random
 from datetime import datetime
+
+def random_string():
+    letters = string.ascii_lowercase
+    random_string = ''.join(random.choice(letters) for i in range(10))
+    return random_string
 
 def give_me_random_routers(computer_id):
 
     random_router = []
-    for _ in range(HEARTBEAT_ROUTER_COUNT):
-        some_value = 'sdjlsgihlsiejjlgihlsie' + str(computer_id)
-        now_router = int('0x' + hashlib.sha256(str(some_value)).hexdigest(), 0) % NUMBER_OF_ROUTERS
+    while len(random_router) < HEARTBEAT_ROUTER_COUNT:
+        now_router = random.randint(0, NUMBER_OF_ROUTERS - 1)
+
+        if now_router in random_router:
+            continue
+
         random_router.append(now_router)
-        computer_id = computer_id + 1
     
     return random_router
 

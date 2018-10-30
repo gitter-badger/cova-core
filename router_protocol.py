@@ -26,6 +26,8 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
 
+    return
+
     address = 'http://localhost:5002/create_cred/' + str(MY_ID)
 
     CREDENTIALS = requests.get(address).text
@@ -121,6 +123,8 @@ def check_for_agreement(data_user_id, task_id):
         print('Task Id Is not in Pending Task')
         return False
 
+    return True
+
     address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
     print(address)
@@ -155,6 +159,8 @@ def check_for_agreement(data_user_id, task_id):
 
 def get_data_link(datahash):
     global MY_ID
+
+    return 'cova.com'
 
     address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
 
