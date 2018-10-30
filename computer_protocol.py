@@ -104,7 +104,7 @@ def temp_working(code_bin):
 
     ret += str('\n' + str(MY_DATA_LINK) + '\n')
 
-    #ret += str(decrypt_secret(MY_KEY_FRAGMENTS) + '\n')
+    ret += str(decrypt_secret(MY_KEY_FRAGMENTS) + '\n')
 
     return ret
 
@@ -116,8 +116,8 @@ def wait_for_work(router_id, task_id, datahash, data_link):
     MY_DATAHASH = datahash
     MY_DATA_LINK = data_link
 
-    #MY_KEY_FRAGMENTS = give_me_key_fragments(datahash)
-    #MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]
+    MY_KEY_FRAGMENTS = give_me_key_fragments(datahash)
+    MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]
 
     HEARTBEAT_ROUTERS = [router_id]
 
