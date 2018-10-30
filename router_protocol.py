@@ -48,7 +48,8 @@ def process_working_heartbeat(computer_id, localtime, task_id):
     if(len(MY_TASK) > 0):
         print(computer_id, localtime, task_id)
     WORKING_COMPUTERS_DEQUE.append((computer_id, localtime))
-    MY_TASK[task_id]['heartbeat'] = localtime
+    if task_id in MY_TASK:
+        MY_TASK[task_id]['heartbeat'] = localtime
 
 def delete_expired_heartbeat():
     global AVAILABLE_COMPUTERS_DEQUE, WORKING_COMPUTERS_DEQUE

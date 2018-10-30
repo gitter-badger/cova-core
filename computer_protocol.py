@@ -68,7 +68,14 @@ def decrypt_secret(fragments):
     key = ""
 
     for i in range(total_fragment):
-        key += SecretSharer.recover_secret(data[i])
+        tmp = SecretSharer.recover_secret(data[i])
+        expected_length = 10
+        if(i == total_fragment - 1):
+            expected_length = 4
+
+        tmp = "0" * (expected_length - len(tmp)) + tmp
+
+        key += tmp
 
     return str(key)
 
