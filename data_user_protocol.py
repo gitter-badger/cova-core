@@ -80,4 +80,4 @@ def print_all_task():
 def run(my_id):
     init(my_id)
     while True:
-        pass
+        time.sleep(1000)

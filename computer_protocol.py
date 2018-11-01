@@ -104,7 +104,8 @@ def temp_working(code_bin):
 
     ret += str('\n' + str(MY_DATA_LINK) + '\n')
 
-    ret += str(decrypt_secret(MY_KEY_FRAGMENTS) + '\n')
+    if not LOCAL:
+        ret += str(decrypt_secret(MY_KEY_FRAGMENTS) + '\n')
 
     return ret
 
@@ -149,4 +150,4 @@ def run(my_id):
     init(my_id)
     thread.start_new_thread(send_heartbeat, ())
     while True:
-        pass
+        time.sleep(1000)

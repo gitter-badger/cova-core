@@ -22,4 +22,6 @@ rm Code/*
 
 touch Code/__init__.py
 
+rm "Test Files"/task_id*
+
 curl localhost:5002/clear_all

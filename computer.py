@@ -29,4 +29,4 @@ if __name__ == "__main__":
     thread.start_new_thread(flaskThread, ())
     thread.start_new_thread(init, ())
     while True:
-        pass
+        time.sleep(1000)

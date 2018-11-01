@@ -26,6 +26,9 @@ def init(my_id):
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
 
+    if LOCAL:
+        return
+
     address = 'http://localhost:5002/create_cred/' + str(MY_ID)
 
     CREDENTIALS = requests.get(address).text
@@ -63,6 +66,8 @@ def delete_expired_heartbeat():
             now_heartbeat = WORKING_COMPUTERS_DEQUE[0]
             if int(time.mktime(datetime.now().timetuple())) - now_heartbeat[1] > HEARTBEAT_CLEAR_TIME:
                 WORKING_COMPUTERS_DEQUE.popleft()
+
+        time.sleep(2)
 
 def give_me_available_computer():
     global AVAILABLE_COMPUTERS_DEQUE
@@ -121,6 +126,9 @@ def check_for_agreement(data_user_id, task_id):
         print('Task Id Is not in Pending Task')
         return False
 
+    if LOCAL:
+        return True
+
     address = 'http://localhost:5000/payment/seeAgreement/' + task_id
 
     print(address)
@@ -156,6 +164,9 @@ def check_for_agreement(data_user_id, task_id):
 def get_data_link(datahash):
     global MY_ID
 
+    if LOCAL:
+        return 'cova.com'
+
     address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
 
     try:
@@ -177,6 +188,9 @@ def get_data_link(datahash):
 def dec_key_fragment(datahash):
 
     global MY_ID
+
+    if LOCAL:
+        return 'my_key' + str(MY_ID)
 
     address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
 
@@ -353,4 +367,4 @@ def run(my_id):
     thread.start_new_thread(delete_expired_heartbeat, ())
     thread.start_new_thread(check_working_computers, ())
     while True:
-        pass
+        time.sleep(1000)

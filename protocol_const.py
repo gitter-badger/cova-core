@@ -5,6 +5,7 @@ COMPUTER_HEARTBEAT_TIME = 5
 HEARTBEAT_CLEAR_TIME = 15
 WORKING_COMPUTER_DETECTION_TIME = 15
 SECRET_NUM = 2
+LOCAL = True
 
 import hashlib, time, string, random
 from datetime import datetime
