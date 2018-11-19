@@ -2,6 +2,7 @@ computer_protocol.pyc
 router_protocol.pyc
 data_user_protocol.pyc
 protocol_const.pyc
+database_helper.pyc
 computer_logs.txt
 router_logs.txt
 data_user_logs.txt

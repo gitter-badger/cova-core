@@ -3,12 +3,13 @@ import time, thread, requests, json, random, hashlib, string
 from collections import deque
 from datetime import datetime
 from sets import Set
+from pydblite.pydblite import Base
+from database_helper import MemoryQueue, MemoryDict
 
 MY_ID = 0
 AVAILABILITY_LIST = [True] * NUMBER_OF_COMPUTERS
-AVAILABLE_COMPUTERS_DEQUE = deque()
-WORKING_COMPUTERS_DEQUE = deque()
-MY_TASK = {}
+AVAILABLE_COMPUTERS_DEQUE = MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
+MY_TASK = MemoryDict('task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout'])
 MY_SECRET = 0
 FP = 0
 PENDING_TASK = {}
@@ -44,39 +45,33 @@ def make_computer_unavailable(computer_id):
 
 def process_heartbeat(computer_id, localtime):
     global AVAILABLE_COMPUTERS_DEQUE
-    AVAILABLE_COMPUTERS_DEQUE.append((computer_id, localtime))
+    AVAILABLE_COMPUTERS_DEQUE.push([computer_id, localtime])
 
 def process_working_heartbeat(computer_id, localtime, task_id):
-    global WORKING_COMPUTERS_DEQUE, MY_TASK
+    global MY_TASK
     if(len(MY_TASK) > 0):
         print(computer_id, localtime, task_id)
-    WORKING_COMPUTERS_DEQUE.append((computer_id, localtime))
     if task_id in MY_TASK:
         MY_TASK[task_id]['heartbeat'] = localtime
 
 def delete_expired_heartbeat():
-    global AVAILABLE_COMPUTERS_DEQUE, WORKING_COMPUTERS_DEQUE
+    global AVAILABLE_COMPUTERS_DEQUE
     while True:
-        if AVAILABLE_COMPUTERS_DEQUE:
-            now_heartbeat = AVAILABLE_COMPUTERS_DEQUE[0]
-            if int(time.mktime(datetime.now().timetuple())) - now_heartbeat[1] > HEARTBEAT_CLEAR_TIME:
-                AVAILABLE_COMPUTERS_DEQUE.popleft()
-        
-        if WORKING_COMPUTERS_DEQUE:
-            now_heartbeat = WORKING_COMPUTERS_DEQUE[0]
-            if int(time.mktime(datetime.now().timetuple())) - now_heartbeat[1] > HEARTBEAT_CLEAR_TIME:
-                WORKING_COMPUTERS_DEQUE.popleft()
+        if not AVAILABLE_COMPUTERS_DEQUE.is_empty():
+            now_heartbeat = AVAILABLE_COMPUTERS_DEQUE.top()
+            if int(time.mktime(datetime.now().timetuple())) - now_heartbeat['localtime'] > HEARTBEAT_CLEAR_TIME:
+                AVAILABLE_COMPUTERS_DEQUE.pop()
 
         time.sleep(2)
 
 def give_me_available_computer():
     global AVAILABLE_COMPUTERS_DEQUE
 
-    while AVAILABLE_COMPUTERS_DEQUE:
-        now_heartbeat = AVAILABLE_COMPUTERS_DEQUE[0]
-        if AVAILABILITY_LIST[now_heartbeat[0]]:
-            return now_heartbeat[0]
-        AVAILABLE_COMPUTERS_DEQUE.popleft()
+    while not AVAILABLE_COMPUTERS_DEQUE.is_empty():
+        now_heartbeat = AVAILABLE_COMPUTERS_DEQUE.top()
+        if AVAILABILITY_LIST[now_heartbeat['computer_id']]:
+            return now_heartbeat['computer_id']
+        AVAILABLE_COMPUTERS_DEQUE.pop()
 
     return None
 
@@ -328,39 +323,6 @@ def check_working_computers():
                 reassign_task(task['computer_id'], task['data_user_id'], task_id)
 
         time.sleep(WORKING_COMPUTER_DETECTION_TIME)
-
-def return_all_status():
-    available_comp = Set()
-    working_comp = Set()
-    for heartbeat in AVAILABLE_COMPUTERS_DEQUE:
-        if AVAILABILITY_LIST[heartbeat[0]]:
-            available_comp.add(heartbeat[0])
-    
-    ret = "Available Computers :<br/>"
-    for comp in available_comp:
-        ret += "Computer No "
-        ret += str(comp)
-        ret += "<br/>"
-    
-    ret += "<br/><br/>Under Me Working :<br/>"
-    
-    for comp in UNDER_MY_WORKING:
-        ret += "Computer No "
-        ret += str(comp)
-        ret += "<br/>"
-    
-    for heartbeat in WORKING_COMPUTERS_DEQUE:
-        if heartbeat[0] in UNDER_MY_WORKING:
-            working_comp.add(heartbeat[0])
-    
-    ret += "<br/><br/>Under Me Alive :<br/>"
-    
-    for comp in working_comp:
-        ret += "Computer No "
-        ret += str(comp)
-        ret += "<br/>"
-    
-    return ret
 
 def run(my_id):
     init(my_id)
