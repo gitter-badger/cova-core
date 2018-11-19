@@ -52,15 +52,36 @@ class MemoryDict(object):
         self.db.create(key, *value)
         self.db.create_index(key)
         self.key = key
-
-    def insert(self, key = "", value = [""]):
-        self.db.insert(key, *value)
+        self.value = value
 
     def give_me_elem(self, key):
         return eval('self.db._' + self.key + '[key]')
 
     def is_in(self, key):
-        return self.give_me_elem(key) > 0
+        return len(self.give_me_elem(key)) > 0
+
+    def insert(self, key = "", value = [""]):
+
+        record = self.give_me_elem(key)
+
+        if len(record) > 0:
+            for i in range(len(self.value)):
+                record[0][self.value[i]] = value[i]
+        else:
+            self.db.insert(key, *value)
+
+    def pop(self, key):
+        record = self.give_me_elem(key)
+
+        if len(record) > 0:
+            rec_id = record[0]['__id__']
+            del self.db[rec_id]
+
+    def iteritems(self):
+        return list(self.db)
+
+    def len(self):
+        return len(self.db)
 
     def print_all(self):
 

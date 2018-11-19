@@ -9,7 +9,7 @@ from database_helper import MemoryQueue, MemoryDict
 MY_ID = 0
 AVAILABILITY_LIST = [True] * NUMBER_OF_COMPUTERS
 AVAILABLE_COMPUTERS_DEQUE = MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
-MY_TASK = MemoryDict('task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout'])
+MY_TASK = MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout'])
 MY_SECRET = 0
 FP = 0
 PENDING_TASK = {}
@@ -49,10 +49,11 @@ def process_heartbeat(computer_id, localtime):
 
 def process_working_heartbeat(computer_id, localtime, task_id):
     global MY_TASK
-    if(len(MY_TASK) > 0):
+    if(MY_TASK.len() > 0):
         print(computer_id, localtime, task_id)
-    if task_id in MY_TASK:
-        MY_TASK[task_id]['heartbeat'] = localtime
+    if MY_TASK.is_in(task_id):
+        record = MY_TASK.give_me_elem(task_id)
+        record[0]['heartbeat'] = localtime
 
 def delete_expired_heartbeat():
     global AVAILABLE_COMPUTERS_DEQUE
@@ -114,7 +115,7 @@ def check_for_agreement(data_user_id, task_id):
 
     global PENDING_TASK
 
-    if task_id in MY_TASK:
+    if MY_TASK.is_in(task_id):
         return True
 
     if task_id not in PENDING_TASK:
@@ -226,10 +227,11 @@ def new_task(data_user_id, task_id):
 
     global UNDER_MY_WORKING, MY_TASK, PENDING_TASK
 
-    if task_id in MY_TASK:
-        cost = MY_TASK[task_id]['cost']
-        timeout = MY_TASK[task_id]['timeout']
-        datahash = MY_TASK[task_id]['datahash']
+    if MY_TASK.is_in(task_id):
+        record = MY_TASK.give_me_elem(task_id)
+        cost = record[0]['cost']
+        timeout = record[0]['timeout']
+        datahash = record[0]['datahash']
     elif task_id in PENDING_TASK:
         cost = PENDING_TASK[task_id]['cost']
         timeout = PENDING_TASK[task_id]['timeout']
@@ -247,7 +249,7 @@ def new_task(data_user_id, task_id):
     computer_address += '/new_task/'
     computer_address += str(MY_ID)
 
-    MY_TASK[task_id] = {'data_user_id' : data_user_id, 'computer_id' : computer_id, 'heartbeat' : give_me_time_counter(), 'datahash' : datahash, 'cost' : cost, 'timeout' : timeout}
+    MY_TASK.insert(task_id, [data_user_id, computer_id, give_me_time_counter(), datahash, cost, timeout])
 
     if task_id in PENDING_TASK:
         PENDING_TASK.pop(task_id)
@@ -276,11 +278,13 @@ def end_task(task_id, return_value, notify_data_user = True):
 
     global UNDER_MY_WORKING, MY_TASK
 
-    computer_id = MY_TASK[task_id]['computer_id']
-    data_user_id = MY_TASK[task_id]['data_user_id']
-    cost = MY_TASK[task_id]['cost']
-    timeout = MY_TASK[task_id]['timeout']
-    datahash = MY_TASK[task_id]['datahash']
+    record = MY_TASK.give_me_elem(task_id)
+
+    computer_id = record[0]['computer_id']
+    data_user_id = record[0]['data_user_id']
+    cost = record[0]['cost']
+    timeout = record[0]['timeout']
+    datahash = record[0]['datahash']
 
     UNDER_MY_WORKING.remove(computer_id)
 
@@ -317,10 +321,11 @@ def reassign_task(computer_id, data_user_id, task_id):
 def check_working_computers():
 
     while True:
-        for task_id, task in MY_TASK.iteritems():
+        for record in MY_TASK.iteritems():
+            task_id = record['task_id']
             now_time = give_me_time_counter()
-            if now_time - task['heartbeat'] > WORKING_COMPUTER_DETECTION_TIME:
-                reassign_task(task['computer_id'], task['data_user_id'], task_id)
+            if now_time - record['heartbeat'] > WORKING_COMPUTER_DETECTION_TIME:
+                reassign_task(record['computer_id'], record['data_user_id'], task_id)
 
         time.sleep(WORKING_COMPUTER_DETECTION_TIME)
 
