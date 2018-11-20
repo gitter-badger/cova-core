@@ -15,6 +15,7 @@ def init_task(router_id, timeout, datahash):
     router_address += '/data_user/init_task/'
     router_address += str(MY_ID)
     ret = requests.post(router_address, data = {'timeout' : str(timeout), 'datahash' : datahash}).text
+    print(ret)
     return json.dumps(json.loads(ret))
 
 def new_task(task_id, router_id):
@@ -26,6 +27,8 @@ def new_task(task_id, router_id):
 
     if(computer_id == 'None'):
         return 'None'
+
+    print('Got Computer ' + str(computer_id))
 
     MY_TASKS[task_id] = {}
     MY_TASKS[task_id]['router_id'] = router_id

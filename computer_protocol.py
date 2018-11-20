@@ -117,10 +117,10 @@ def wait_for_work(router_id, task_id, datahash, data_link):
     MY_DATAHASH = datahash
     MY_DATA_LINK = data_link
 
+    HEARTBEAT_ROUTERS = [router_id]
+
     MY_KEY_FRAGMENTS = give_me_key_fragments(datahash)
     MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]
-
-    HEARTBEAT_ROUTERS = [router_id]
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Waiting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
 

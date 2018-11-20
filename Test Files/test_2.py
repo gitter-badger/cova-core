@@ -35,6 +35,8 @@ print(task_id, cost)
 
 now_computer = new_task(1, task_id)
 
+print('Got Computer : ' + str(now_computer))
+
 code = load_code('data_user_code.py')
 
 start_task(now_computer, task_id, code)

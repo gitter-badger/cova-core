@@ -1,64 +1,77 @@
-from flask import Flask, request, render_template
 import time, thread, sys, requests
 import router_protocol
+import request_helper
 
-app = Flask(__name__)
-
-@app.route('/')
 def hello():
     return 'Router : Hello, World at port ' + sys.argv[1]
-    
-@app.route('/computer/heartbeat/<computer_id>', methods = ['POST'])
-def heartbeat_from_computer(computer_id):
-    router_protocol.process_heartbeat(int(computer_id), int(request.form['localtime']))
+
+def heartbeat_from_computer(computer_id, form):
+    router_protocol.process_heartbeat(int(computer_id), int(form['localtime']))
     return "Got Heartbeat"
 
-@app.route('/computer/workingheartbeat/<computer_id>', methods = ['POST'])
-def heartbeat_from_working_computer(computer_id):
-    router_protocol.process_working_heartbeat(int(computer_id), int(request.form['localtime']), str(request.form['task_id']))
+def heartbeat_from_working_computer(computer_id, form):
+    router_protocol.process_working_heartbeat(int(computer_id), int(form['localtime']), str(form['task_id']))
     return "Got Heartbeat"
 
-@app.route('/computer/work/<computer_id>', methods = ['POST'])
-def start_working_post(computer_id):
+def start_working_post(computer_id, form):
     router_protocol.make_computer_unavailable(int(computer_id))
     return 'Computer is unavailable : ' + str(computer_id)
 
-@app.route('/computer/finish/<computer_id>', methods = ['POST'])
-def finish_working_post(computer_id):
+def finish_working_post(computer_id, form):
     router_protocol.make_computer_available(int(computer_id))
     return 'Computer is available : ' + str(computer_id)
 
-@app.route('/allstatus')
 def allstatus():
     return router_protocol.return_all_status()
 
-@app.route('/data_user/init_task/<data_user_id>', methods = ['POST'])
-def init_task(data_user_id):
-    return router_protocol.init_task(int(data_user_id), int(request.form['timeout']), str(request.form['datahash']))
+def init_task(data_user_id, form):
+    return router_protocol.init_task(int(data_user_id), int(form['timeout']), str(form['datahash']))
 
-@app.route('/data_user/new_task/<data_user_id>', methods = ['POST'])
-def new_task(data_user_id):
-    computer_id = router_protocol.new_task(int(data_user_id), str(request.form['task_id']))
+def new_task(data_user_id, form):
+    computer_id = router_protocol.new_task(int(data_user_id), str(form['task_id']))
     return str(computer_id)
 
-@app.route('/computer/end_task', methods = ['POST'])
-def end_task():
-    router_protocol.end_task(str(request.form['task_id']), str(request.form['return_value']))
+def end_task(form):
+    router_protocol.end_task(str(form['task_id']), str(form['return_value']))
     return 'Ended Task'
 
-@app.route('/search_available', methods = ['POST'])
-def search_available():
+def search_available(form):
     return str(router_protocol.give_me_available_computer())
 
-@app.route('/dec_key_fragment', methods = ['POST'])
-def dec_key_fragment():
-    return router_protocol.dec_key_fragment(str(request.form['datahash']))
+def dec_key_fragment(form):
+    print('Got It in dec key')
+    return router_protocol.dec_key_fragment(str(form['datahash']))
+
+get_req = {'hello' : ['/', 0],
+           'allstatus' : ['/allstatus', 0]}
+post_req = {'heartbeat_from_computer' : ['/computer/heartbeat', 1],
+            'heartbeat_from_working_computer' : ['/computer/workingheartbeat', 1],
+            'start_working_post' : ['/computer/work', 1],
+            'finish_working_post' : ['/computer/finish', 1],
+            'init_task' : ['/data_user/init_task', 1],
+            'new_task' : ['/data_user/new_task', 1],
+            'end_task' : ['/computer/end_task', 0],
+            'search_available' : ['/search_available', 0],
+            'dec_key_fragment' : ['/dec_key_fragment', 0]}
+
+request_helper.hello = hello
+request_helper.allstatus = allstatus
+request_helper.heartbeat_from_computer = heartbeat_from_computer
+request_helper.heartbeat_from_working_computer = heartbeat_from_working_computer
+request_helper.start_working_post = start_working_post
+request_helper.finish_working_post = finish_working_post
+request_helper.init_task = init_task
+request_helper.new_task = new_task
+request_helper.end_task = end_task
+request_helper.search_available = search_available
+request_helper.dec_key_fragment = dec_key_fragment
 
 def init():
     router_protocol.run(int(sys.argv[1]) - 10000)
 
 def flaskThread():
-    app.run(host = '0.0.0.0', port = sys.argv[1])
+    ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))
+    ob.run()
     
 if __name__ == "__main__":
     thread.start_new_thread(flaskThread, ())

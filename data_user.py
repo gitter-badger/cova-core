@@ -1,46 +1,54 @@
-from flask import Flask, request, render_template
 import time, thread, sys, requests
 import data_user_protocol
 from datetime import datetime
+import request_helper
 
-app = Flask(__name__)
-
-@app.route('/')
 def hello():
     return 'Data User : Hello, World at port ' + sys.argv[1]
 
-@app.route('/init_task/<router_id>', methods = ['POST'])
-def init_task(router_id):
-    return data_user_protocol.init_task(int(router_id), int(request.form['timeout']), str(request.form['datahash']))
+def init_task(router_id, form):
+    return data_user_protocol.init_task(int(router_id), int(form['timeout']), str(form['datahash']))
 
-@app.route('/new_task/<task_id>/<router_id>')
 def new_task(task_id, router_id):
     computer_id = data_user_protocol.new_task(str(task_id), int(router_id))
     return str(computer_id)
 
-@app.route('/start_task', methods = ['POST'])
-def start_task():
-    data_user_protocol.start_task(str(request.form['code_bin']), str(request.form['task_id']), int(request.form['computer_id']))
+def start_task(form):
+    data_user_protocol.start_task(str(form['code_bin']), str(form['task_id']), int(form['computer_id']))
     return 'something'
 
-@app.route('/restart_task', methods = ['POST'])
-def restart_task():
-    data_user_protocol.restart_task(str(request.form['task_id']))
+def restart_task(form):
+    data_user_protocol.restart_task(str(form['task_id']))
     return 'restarted task'
 
-@app.route('/end_task', methods = ['POST'])
-def end_task():
-	return data_user_protocol.end_task(str(request.form['task_id']), str(request.form['return_value']))
+def end_task(form):
+	return data_user_protocol.end_task(str(form['task_id']), str(form['return_value']))
 
-@app.route('/get_all_task')
 def get_all_task():
 	return data_user_protocol.print_all_task()
+
+get_req = {'hello' : ['/', 0],
+           'new_task' : ['/new_task', 2],
+           'get_all_task' : ['/get_all_task', 0]}
+post_req = {'init_task' : ['/init_task', 1],
+            'start_task' : ['/start_task', 0],
+            'restart_task' : ['/restart_task', 0],
+            'end_task' : ['/end_task', 0]}
+
+request_helper.hello = hello
+request_helper.new_task = new_task
+request_helper.get_all_task = get_all_task
+request_helper.init_task = init_task
+request_helper.start_task = start_task
+request_helper.restart_task = restart_task
+request_helper.end_task = end_task
 
 def init():
     data_user_protocol.run(int(sys.argv[1]) - 12000)
 
 def flaskThread():
-    app.run(host = '0.0.0.0', port = sys.argv[1])
+    ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))
+    ob.run()
     
 if __name__ == "__main__":
     thread.start_new_thread(flaskThread, ())
