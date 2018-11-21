@@ -20,9 +20,11 @@ def get(address = ''):
 
     rsp = conn.getresponse()
 
+    ret = str(rsp.read())
+
     conn.close()
 
-    return response(str(rsp.read()))
+    return response(ret)
 
 def post(address = '', data = {}):
     address = address[7:]
@@ -42,6 +44,8 @@ def post(address = '', data = {}):
     conn.request('POST', address, params, headers)
     rsp = conn.getresponse()
 
+    ret = str(rsp.read())
+
     conn.close()
 
-    return response(str(rsp.read()))
+    return response(ret)
