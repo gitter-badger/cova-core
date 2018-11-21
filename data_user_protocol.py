@@ -1,5 +1,6 @@
 from protocol_const import *
-import time, thread, requests, json
+import time, thread, json
+import Requests as requests
 
 MY_ID = 0
 MY_TASKS = {}

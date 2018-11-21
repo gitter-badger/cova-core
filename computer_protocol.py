@@ -1,7 +1,8 @@
 from protocol_const import *
-import time, thread, requests, importlib, json
+import time, thread, importlib, json
 from secretsharing import SecretSharer
 import random
+import Requests as requests
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0

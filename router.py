@@ -1,4 +1,4 @@
-import time, thread, sys, requests
+import time, thread, sys
 import router_protocol
 import request_helper
 

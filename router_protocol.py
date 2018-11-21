@@ -1,10 +1,11 @@
 from protocol_const import *
-import time, thread, requests, json, random, hashlib, string
+import time, thread, json, random, hashlib, string
 from collections import deque
 from datetime import datetime
 from sets import Set
 from pydblite.pydblite import Base
 from database_helper import MemoryQueue, MemoryDict
+import Requests as requests
 
 MY_ID = 0
 AVAILABILITY_LIST = [True] * NUMBER_OF_COMPUTERS
