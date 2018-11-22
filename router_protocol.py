@@ -8,7 +8,7 @@ from database_helper import MemoryQueue, MemoryDict
 import Requests as requests
 
 MY_ID = 0
-AVAILABILITY_LIST = [True] * NUMBER_OF_COMPUTERS
+AVAILABILITY_LIST = {}
 AVAILABLE_COMPUTERS_DEQUE = MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
 MY_TASK = MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout'])
 MY_SECRET = 0
@@ -17,6 +17,10 @@ PENDING_TASK = {}
 CREDENTIALS = {}
 
 UNDER_MY_WORKING = Set()
+
+def join_req(computer_id):
+    global AVAILABILITY_LIST
+    AVAILABILITY_LIST[computer_id] = True
 
 def set_secret(secret):
     global MY_SECRET
@@ -83,12 +87,13 @@ def search_for_available_computer():
 
     while True:
         random_router_id = random.randint(0, NUMBER_OF_ROUTERS - 1)
-        router_address = give_me_router_address(random_router_id)
+        random_router_id += 10000
+        router_address = give_me_router_address(str(random_router_id))
         router_address += '/search_available'
         computer_id = str(requests.post(router_address).text)
         if computer_id == 'None':
             continue
-        return int(computer_id)
+        return str(computer_id)
 
 def task_id_generator():
     letters = string.ascii_lowercase

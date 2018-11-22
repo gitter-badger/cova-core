@@ -4,7 +4,7 @@ def init_task(router_id, timeout, datahash):
     return requests.post('http://localhost:' + str(12000) + '/init_task/' + str(router_id), data = {'timeout' : timeout, 'datahash' : datahash}).text
 
 def new_task(router_id, task_id):
-    return int(str(requests.get('http://localhost:' + str(12000) + '/new_task/' + str(task_id) + '/' + str(router_id)).text))
+    return str(requests.get('http://localhost:' + str(12000) + '/new_task/' + str(task_id) + '/' + str(router_id)).text)
 
 def start_task(computer_id, task_id, code):
     requests.post('http://localhost:12000/start_task', data = {'computer_id' : str(computer_id), 'task_id' : str(task_id), 'code_bin' : str(code)})
@@ -19,11 +19,11 @@ COMPUTER_ID = FP.read().split()
 COMPUTER_ID = [int(i) for i in COMPUTER_ID]
 
 def kill_computer(computer_id):
-    os.kill(COMPUTER_ID[computer_id + 1], signal.SIGKILL)
+    os.kill(COMPUTER_ID[int(computer_id) - 11000 + 1], signal.SIGKILL)
 
 datahash = 'nadimgukhay'
 
-ret = json.loads(init_task(1, 15, datahash))
+ret = json.loads(init_task(10000, 15, datahash))
 
 print(type(ret))
 print(ret)
@@ -33,7 +33,7 @@ cost = int(str(ret['cost']))
 
 print(task_id, cost)
 
-now_computer = new_task(1, task_id)
+now_computer = new_task(10000, task_id)
 
 print('Got Computer : ' + str(now_computer))
 

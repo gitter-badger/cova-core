@@ -21,6 +21,12 @@ def init(my_id):
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)
     FP = open('Log/computer.txt', 'a+', 0)
 
+    for router in range(NUMBER_OF_ROUTERS):
+        router_address = give_me_router_address(str(router + 10000))
+        router_address += '/join_req/'
+        router_address += str(MY_ID)
+        requests.get(router_address)
+
 def send_heartbeat():
     while True:
         for router in HEARTBEAT_ROUTERS:
@@ -47,7 +53,10 @@ def give_me_key_fragments(datahash):
 
     for i in range(SECRET_NUM):
         router_id = (start_node + i) % NUMBER_OF_ROUTERS
-        address = give_me_router_address(router_id)
+
+        router_id += 10000
+
+        address = give_me_router_address(str(router_id))
         address += '/dec_key_fragment'
         dec_key_fragment = str(requests.post(address, data = {'datahash' : datahash}).text)
         ret.append(dec_key_fragment)

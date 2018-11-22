@@ -7,7 +7,7 @@ def hello():
     return 'Computer : Hello, World at port ' + sys.argv[1]
 
 def new_task_post(router_id, form):
-    computer_protocol.wait_for_work(int(router_id), str(form['task_id']), str(form['datahash']), str(form['data_link']))
+    computer_protocol.wait_for_work(str(router_id), str(form['task_id']), str(form['datahash']), str(form['data_link']))
     return 'waiting to work'
 
 def goto_work(form):
@@ -23,7 +23,7 @@ request_helper.new_task_post = new_task_post
 request_helper.goto_work = goto_work
 
 def init():
-    computer_protocol.run(int(sys.argv[1]) - 11000)
+    computer_protocol.run(str(sys.argv[1]))
 
 def flaskThread():
     ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))

@@ -7,14 +7,14 @@ def hello():
     return 'Data User : Hello, World at port ' + sys.argv[1]
 
 def init_task(router_id, form):
-    return data_user_protocol.init_task(int(router_id), int(form['timeout']), str(form['datahash']))
+    return data_user_protocol.init_task(str(router_id), int(form['timeout']), str(form['datahash']))
 
 def new_task(task_id, router_id):
-    computer_id = data_user_protocol.new_task(str(task_id), int(router_id))
+    computer_id = data_user_protocol.new_task(str(task_id), str(router_id))
     return str(computer_id)
 
 def start_task(form):
-    data_user_protocol.start_task(str(form['code_bin']), str(form['task_id']), int(form['computer_id']))
+    data_user_protocol.start_task(str(form['code_bin']), str(form['task_id']), str(form['computer_id']))
     return 'something'
 
 def restart_task(form):
@@ -44,7 +44,7 @@ request_helper.restart_task = restart_task
 request_helper.end_task = end_task
 
 def init():
-    data_user_protocol.run(int(sys.argv[1]) - 12000)
+    data_user_protocol.run(str(sys.argv[1]))
 
 def flaskThread():
     ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))

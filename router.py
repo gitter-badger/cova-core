@@ -6,29 +6,29 @@ def hello():
     return 'Router : Hello, World at port ' + sys.argv[1]
 
 def heartbeat_from_computer(computer_id, form):
-    router_protocol.process_heartbeat(int(computer_id), int(form['localtime']))
+    router_protocol.process_heartbeat(str(computer_id), int(form['localtime']))
     return "Got Heartbeat"
 
 def heartbeat_from_working_computer(computer_id, form):
-    router_protocol.process_working_heartbeat(int(computer_id), int(form['localtime']), str(form['task_id']))
+    router_protocol.process_working_heartbeat(str(computer_id), int(form['localtime']), str(form['task_id']))
     return "Got Heartbeat"
 
 def start_working_post(computer_id, form):
-    router_protocol.make_computer_unavailable(int(computer_id))
+    router_protocol.make_computer_unavailable(str(computer_id))
     return 'Computer is unavailable : ' + str(computer_id)
 
 def finish_working_post(computer_id, form):
-    router_protocol.make_computer_available(int(computer_id))
+    router_protocol.make_computer_available(str(computer_id))
     return 'Computer is available : ' + str(computer_id)
 
 def allstatus():
     return router_protocol.return_all_status()
 
 def init_task(data_user_id, form):
-    return router_protocol.init_task(int(data_user_id), int(form['timeout']), str(form['datahash']))
+    return router_protocol.init_task(str(data_user_id), int(form['timeout']), str(form['datahash']))
 
 def new_task(data_user_id, form):
-    computer_id = router_protocol.new_task(int(data_user_id), str(form['task_id']))
+    computer_id = router_protocol.new_task(str(data_user_id), str(form['task_id']))
     return str(computer_id)
 
 def end_task(form):
@@ -42,8 +42,13 @@ def dec_key_fragment(form):
     print('Got It in dec key')
     return router_protocol.dec_key_fragment(str(form['datahash']))
 
+def join_req(computer_id):
+    router_protocol.join_req(str(computer_id))
+    return 'joined'
+
 get_req = {'hello' : ['/', 0],
-           'allstatus' : ['/allstatus', 0]}
+           'allstatus' : ['/allstatus', 0],
+           'join_req' : ['/join_req', 1]}
 post_req = {'heartbeat_from_computer' : ['/computer/heartbeat', 1],
             'heartbeat_from_working_computer' : ['/computer/workingheartbeat', 1],
             'start_working_post' : ['/computer/work', 1],
@@ -65,9 +70,10 @@ request_helper.new_task = new_task
 request_helper.end_task = end_task
 request_helper.search_available = search_available
 request_helper.dec_key_fragment = dec_key_fragment
+request_helper.join_req = join_req
 
 def init():
-    router_protocol.run(int(sys.argv[1]) - 10000)
+    router_protocol.run(str(sys.argv[1]))
 
 def flaskThread():
     ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))

@@ -15,6 +15,9 @@ def init_task(router_id, timeout, datahash):
     router_address = give_me_router_address(router_id)
     router_address += '/data_user/init_task/'
     router_address += str(MY_ID)
+
+    print(router_address)
+
     ret = requests.post(router_address, data = {'timeout' : str(timeout), 'datahash' : datahash}).text
     print(ret)
     return json.dumps(json.loads(ret))
@@ -70,7 +73,7 @@ def restart_task(task_id):
     router_id = MY_TASKS[task_id]['router_id']
     code_bin = MY_TASKS[task_id]['code_bin']
     
-    computer_id = int(new_task(task_id, router_id))
+    computer_id = str(new_task(task_id, router_id))
     start_task(code_bin, task_id, computer_id)
 
 def print_all_task():
