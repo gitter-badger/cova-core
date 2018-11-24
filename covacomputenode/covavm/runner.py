@@ -36,15 +36,10 @@ def run_with_covavm(code_src, data, policy_text, args, package=None):
     sys.argv = args
     if package:
         sys.path[0] = ''
-    source = code_src
-    # We have the source.  `compile` still needs the last line to be clean,
-    # so make sure it is, then compile a code object from it.
-    if not source or source[-1] != '\n':
-        source += '\n'
 
     # Instantiate a fresh CovaVM
-    vm_instance = vm.CovaVM(code=source, data=data, policy=policy, env=main_mod.__dict__)
-    vm_instance.run_program() # run program with policies
+    vm_instance = vm.CovaVM(code=code_src, data=data, policy=policy, env=main_mod.__dict__)
+    vm_instance.run_program() # gitrun program with policies
     sys.modules['__main__'] = old_main_mod
 
     # Restore the old argv and path

@@ -295,7 +295,12 @@ class CovaVM(object):
         return val
     
     def run_program(self):
-        code_obj = compile(self.code, '__COVA__', "exec")
+        source = self.code
+        # We have the source.  `compile` still needs the last line to be clean,
+        # so make sure it is, then compile a code object from it.
+        if not source or source[-1] != '\n':
+            source += '\n'
+        code_obj = compile(source, '__COVA__', "exec")
         frame = self.make_frame(code_obj, f_globals=self.env)
         try:
             self.pm.run_preconditions()
