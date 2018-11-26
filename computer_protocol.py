@@ -3,6 +3,7 @@ import time, thread, importlib, json
 from secretsharing import SecretSharer
 import random
 import Requests as requests
+import file_decryption
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -119,6 +120,20 @@ def temp_working(code_bin):
 
     return ret
 
+def working(code_bin):
+    skey = decrypt_secret(MY_KEY_FRAGMENTS)
+    data = file_decryption.get_data(MY_DATA_LINK, skey)
+
+    ret = str(MY_DATA_LINK) + '\n'
+    ret += str(data) + '\n'
+
+    data = json.loads(data)
+
+    print(data)
+    print(type(data))
+
+    return ret
+
 def wait_for_work(router_id, task_id, datahash, data_link):
     global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS, MY_DATA_LINK
     IS_WORKING = True
@@ -143,7 +158,7 @@ def do_work(task_id, code):
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
 
-    ret = temp_working(code)
+    ret = working(code)
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
     
