@@ -121,6 +121,8 @@ def temp_working(code_bin):
     return ret
 
 def working(code_bin):
+
+    print(MY_KEY_FRAGMENTS)
     skey = decrypt_secret(MY_KEY_FRAGMENTS)
     data = file_decryption.get_data(MY_DATA_LINK, skey)
 
