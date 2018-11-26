@@ -124,7 +124,12 @@ def working(code_bin):
 
     print(MY_KEY_FRAGMENTS)
     skey = decrypt_secret(MY_KEY_FRAGMENTS)
+
+    print(MY_DATA_LINK, skey)
+
     data = file_decryption.get_data(MY_DATA_LINK, skey)
+
+    print(data)
 
     ret = str(MY_DATA_LINK) + '\n'
     ret += str(data) + '\n'
