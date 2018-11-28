@@ -35,7 +35,7 @@ def init(my_id):
     if LOCAL:
         return
 
-    address = 'http://localhost:5002/create_cred/' + str(MY_ID)
+    address = 'http://localhost:5002/create_cred/d/' + str(MY_ID)
 
     CREDENTIALS = requests.get(address).text
     CREDENTIALS = json.loads(CREDENTIALS)
