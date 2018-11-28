@@ -4,6 +4,8 @@ from secretsharing import SecretSharer
 import random
 import Requests as requests
 import file_decryption
+from covavm import runner
+import hashlib
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -120,26 +122,31 @@ def temp_working(code_bin):
 
     return ret
 
+def ndarray_to_string(arr):
+
+    return json.dumps(arr.tolist())
+
 def working(code_bin):
 
     print(MY_KEY_FRAGMENTS)
     skey = decrypt_secret(MY_KEY_FRAGMENTS)
 
-    print(MY_DATA_LINK, skey)
+    print(MY_DATA_LINK)
+    print(skey)
 
     data = file_decryption.get_data(MY_DATA_LINK, skey)
 
-    print(data)
-
-    ret = str(MY_DATA_LINK) + '\n'
-    ret += str(data) + '\n'
-
     data = json.loads(data)
 
-    print(data)
-    print(type(data))
+    H = hashlib.md5(code_bin.encode()).hexdigest()
 
-    return ret
+    print(H)
+
+    print(data['policies'])
+
+    ret = runner.run_with_covavm(code_bin, data['data'], data['policies'], ['__covaprogram__'])
+
+    return ndarray_to_string(ret.payload)
 
 def wait_for_work(router_id, task_id, datahash, data_link):
     global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS, MY_DATA_LINK
