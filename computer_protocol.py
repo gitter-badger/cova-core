@@ -136,6 +136,8 @@ def working(code_bin):
 
     data = file_decryption.get_data(MY_DATA_LINK, skey)
 
+    print(data)
+
     data = json.loads(data)
 
     H = hashlib.md5(code_bin.encode()).hexdigest()

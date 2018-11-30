@@ -1,4 +1,0 @@
-11:39:25 ROUTER 10000 Assigning task id 1543556365xgb to computer id 11002
-11:39:58 ROUTER 10000 Reassigning task id 1543556365xgb
-11:39:58 ROUTER 10000 Ending task id 1543556365xgb from computer id 11002
-11:39:58 ROUTER 10000 Assigning task id 1543556365xgb to computer id 11001
