@@ -9,11 +9,11 @@ except ImportError:
 def decrypt_data(encrypted_data, key):
     hashFunction = nacl.secret.SecretBox(key)
 
-    try:
-        decrtpted_data = hashFunction.decrypt(encrypted_data)
+    #try:
+    decrtpted_data = hashFunction.decrypt(encrypted_data)
 
-    except Exception as error:
-        return "Invalid Key"
+    #except Exception as error:
+        #return "Invalid Key"
 
     return decrtpted_data
 
