@@ -1,6 +1,10 @@
-COVA Compute Node
+COVA Core
 ========================
 
-This projecy contains the public facign repo for COVA compute node.
+This projecy contains the public facing repo for COVA core.
 
-This repo has two major component: 1) cova gossip network networking components 2) CovaVM, which enforces the smart data policies
+This repo has four major components: 
+1. Cova Routing Node
+2. Cova Compute Node
+3. Centrifuge and Smart Policy writing toolkit
+4. CovaVM, which enforces the smart data policies
