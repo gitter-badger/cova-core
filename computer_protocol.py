@@ -172,7 +172,10 @@ def do_work(task_id, code):
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
 
-    ret = working(code)
+    if LOCAL:
+        ret = temp_working(code)
+    else:
+        ret = working(code)
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
     

@@ -1,10 +1,12 @@
 import requests, time, os, signal, json
 
-def init_task(router_id, timeout, datahash):
-    return requests.post('http://localhost:' + str(12000) + '/init_task/' + str(router_id), data = {'timeout' : timeout, 'datahash' : datahash}).text
+def init_task(router_id, timeout, datahash, code_bin):
+    address = 'http://localhost:' + str(router_id) + '/data_user/init_task/' + str(12000)
+    print(address)
+    return requests.post(address, data = {'timeout' : timeout, 'datahash' : datahash, 'code_bin' : code_bin}).text
 
 def new_task(router_id, task_id):
-    return str(requests.get('http://localhost:' + str(12000) + '/new_task/' + str(task_id) + '/' + str(router_id)).text)
+    return str(requests.post('http://localhost:' + str(router_id) + '/data_user/new_task/' + str(12000), data = {'task_id' : task_id}).text)
 
 def start_task(computer_id, task_id, code):
     requests.post('http://localhost:12000/start_task', data = {'computer_id' : str(computer_id), 'task_id' : str(task_id), 'code_bin' : str(code)})
@@ -22,8 +24,9 @@ def kill_computer(computer_id):
     os.kill(COMPUTER_ID[int(computer_id) - 11000 + 1], signal.SIGKILL)
 
 datahash = 'nadimgukhay'
+code_bin = load_code('data_user_code.py')
 
-ret = json.loads(init_task(10000, 15, datahash))
+ret = json.loads(init_task(10000, 15, datahash, code_bin))
 
 print(type(ret))
 print(ret)
@@ -36,10 +39,6 @@ print(task_id, cost)
 now_computer = new_task(10000, task_id)
 
 print('Got Computer : ' + str(now_computer))
-
-code = load_code('data_user_code.py')
-
-start_task(now_computer, task_id, code)
 
 print(now_computer)
 

@@ -7,7 +7,7 @@ def hello():
     return 'Data User : Hello, World at port ' + sys.argv[1]
 
 def init_task(router_id, form):
-    return data_user_protocol.init_task(str(router_id), int(form['timeout']), str(form['datahash']))
+    return data_user_protocol.init_task(str(router_id), int(form['timeout']), str(form['datahash']), str(form['code_bin']))
 
 def new_task(task_id, router_id):
     computer_id = data_user_protocol.new_task(str(task_id), str(router_id))

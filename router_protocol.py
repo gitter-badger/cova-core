@@ -10,7 +10,7 @@ import Requests as requests
 MY_ID = 0
 AVAILABILITY_LIST = {}
 AVAILABLE_COMPUTERS_DEQUE = MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
-MY_TASK = MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout'])
+MY_TASK = MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout', 'code_bin'])
 MY_SECRET = 0
 FP = 0
 PENDING_TASK = {}
@@ -104,14 +104,14 @@ def task_id_generator():
 def cost_function(timeout):
     return 100
 
-def init_task(data_user_id, timeout, datahash):
+def init_task(data_user_id, timeout, datahash, code_bin):
 
     global PENDING_TASK
     task_id = task_id_generator()
 
     cost = cost_function(timeout)
 
-    PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout, 'datahash' : datahash}
+    PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout, 'datahash' : datahash, 'code_bin' : code_bin}
 
     print(PENDING_TASK)
 
@@ -238,10 +238,12 @@ def new_task(data_user_id, task_id):
         cost = record[0]['cost']
         timeout = record[0]['timeout']
         datahash = record[0]['datahash']
+        code_bin = record[0]['code_bin']
     elif task_id in PENDING_TASK:
         cost = PENDING_TASK[task_id]['cost']
         timeout = PENDING_TASK[task_id]['timeout']
         datahash = PENDING_TASK[task_id]['datahash']
+        code_bin = PENDING_TASK[task_id]['code_bin']
     else:
         print('DataHash Not Found in Routing Node')
         return 'None'
@@ -255,7 +257,7 @@ def new_task(data_user_id, task_id):
     computer_address += '/new_task/'
     computer_address += str(MY_ID)
 
-    MY_TASK.insert(task_id, [data_user_id, computer_id, give_me_time_counter(), datahash, cost, timeout])
+    MY_TASK.insert(task_id, [data_user_id, computer_id, give_me_time_counter(), datahash, cost, timeout, code_bin])
 
     if task_id in PENDING_TASK:
         PENDING_TASK.pop(task_id)
@@ -277,6 +279,11 @@ def new_task(data_user_id, task_id):
         router_address += str(computer_id)
         requests.post(router_address)
 
+    computer_address = give_me_computer_address(computer_id)
+    computer_address += '/goto_work'
+
+    requests.post(computer_address, data = {'code_bin' : str(code_bin), 'task_id' : task_id})
+
     return str(computer_id)
     
 
@@ -291,11 +298,12 @@ def end_task(task_id, return_value, notify_data_user = True):
     cost = record[0]['cost']
     timeout = record[0]['timeout']
     datahash = record[0]['datahash']
+    code_bin = record[0]['code_bin']
 
     UNDER_MY_WORKING.remove(computer_id)
 
     if not notify_data_user:
-        PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout, 'datahash' : datahash}
+        PENDING_TASK[task_id] = {'data_user_id' : data_user_id, 'cost' : cost, 'timeout' : timeout, 'datahash' : datahash, 'code_bin' : code_bin}
 
     MY_TASK.pop(task_id)
 
@@ -310,19 +318,18 @@ def end_task(task_id, return_value, notify_data_user = True):
         requests.post(router_address)
 
     if notify_data_user:
-        data_user_address = give_me_data_user_address(data_user_id)
-        data_user_address += '/end_task'
-        requests.post(data_user_address, data = {'task_id' : str(task_id), 'return_value' : str(return_value)})
-
+        #data_user_address = give_me_data_user_address(data_user_id)
+        #data_user_address += '/end_task'
+        #requests.post(data_user_address, data = {'task_id' : str(task_id), 'return_value' : str(return_value)})
+        fp = open('Test Files/task_id_' + str(task_id) + '.txt', 'w')
+        fp.write(return_value)
+        fp.close()
 
 def reassign_task(computer_id, data_user_id, task_id):
     FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Reassigning task id ' + str(task_id) + '\n')
+    
     end_task(task_id, 'nothing', False)
-
-    data_user_address = give_me_data_user_address(data_user_id)
-    data_user_address += '/restart_task'
-
-    requests.post(data_user_address, data = {'task_id' : task_id})
+    new_task(data_user_id, task_id)
 
 def check_working_computers():
 

@@ -1,0 +1,4 @@
+11:39:25 COMPUTER 11002 Waiting task id 1543556365xgb from router id 10000
+11:39:25 COMPUTER 11002 Working task id 1543556365xgb
+11:39:58 COMPUTER 11001 Waiting task id 1543556365xgb from router id 10000
+11:39:59 COMPUTER 11001 Working task id 1543556365xgb

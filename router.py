@@ -25,7 +25,7 @@ def allstatus():
     return router_protocol.return_all_status()
 
 def init_task(data_user_id, form):
-    return router_protocol.init_task(str(data_user_id), int(form['timeout']), str(form['datahash']))
+    return router_protocol.init_task(str(data_user_id), int(form['timeout']), str(form['datahash']), str(form['code_bin']))
 
 def new_task(data_user_id, form):
     computer_id = router_protocol.new_task(str(data_user_id), str(form['task_id']))
