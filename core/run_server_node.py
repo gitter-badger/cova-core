@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
         if cred["router"]:
             from routingnode import router
-            router.run(cred["id"])
+            router.run(cred["id"], cred)
         else:
             from computenode import computer
             computer.run(cred["eth_cred"]["address"], cred["public_ip"])
