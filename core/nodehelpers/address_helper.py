@@ -1,9 +1,14 @@
-import hashlib, time, string, random, json
+import hashlib
+import time
+import string
+import random
+import json
 from datetime import datetime
+from file_helpers import get_absolute_path
 from protocol_const import *
 
 
-fp = open(ROUTING_NODES, 'r')
+fp = open(get_absolute_path(ROUTING_NODES), 'r')
 ROUTER_ADDRESS = json.loads(fp.read())
 
 

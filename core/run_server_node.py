@@ -1,16 +1,12 @@
 import json
 import sys
 from nodehelpers.protocol_const import DEFAULT_CRED_PATH
+from nodehelpers.file_helpers import get_absolute_path
 
-import os
-
-def get_absolute_path(filename):
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
 
 def get_credentials(cred_path):
     with open(get_absolute_path(cred_path)) as f:
         return json.load(f)
-
 
 if __name__ == "__main__":
     cred = None
