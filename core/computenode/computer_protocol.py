@@ -59,7 +59,9 @@ def give_me_key_fragments(datahash):
     start_node = random.randint(0, NUMBER_OF_ROUTERS - 1)
     ret = []
 
-    for i in range(SECRET_NUM):
+    counter = 0
+
+    while True:
         router_id = (start_node + i) % NUMBER_OF_ROUTERS
 
         router_id = 'router' + str(router_id)
@@ -68,6 +70,11 @@ def give_me_key_fragments(datahash):
         address += '/dec_key_fragment'
         dec_key_fragment = str(requests.post(address, data = {'datahash' : datahash}).text)
         ret.append(dec_key_fragment)
+
+        counter += 1
+
+        if 2*counter > NUMBER_OF_ROUTERS:
+            break
 
     return ret
 
