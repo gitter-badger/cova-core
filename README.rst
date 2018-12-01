@@ -15,17 +15,17 @@ To run router nodes:
 
 Make sure you have all the router credentials under `configs/router[i].json`
 
-```
+~~~
 # cd dockerfiles/routingnode
 docker compose up -d
 # cd /path/to/cova-core
 docker run -t routingnode -v config/router[i].json:config/usercred.json
-```
+~~~
 
 To run compute nodes:
 
-```
+~~~
 # cd dockerfiles/comptuenode
 docker compose up -d
 docker run -t computenode
-```
+~~~
