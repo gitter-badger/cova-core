@@ -10,7 +10,10 @@ def get_credentials(cred_path):
 
 if __name__ == "__main__":
     try:
-        cred = get_credentials(DEFAULT_CRED_PATH)
+        if len(sys.argv) == 2:
+            cred = get_credentials(sys.argv[1])
+        else:
+            cred = get_credentials(DEFAULT_CRED_PATH)
 
         if cred["router"]:
             from routingnode import router
