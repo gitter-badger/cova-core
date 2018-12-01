@@ -1,3 +1,6 @@
+# user credential json
+configs/usercred.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
