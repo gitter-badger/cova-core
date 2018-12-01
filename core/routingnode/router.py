@@ -89,6 +89,6 @@ def flaskThread(my_id):
     
 def run(my_id, cred):
     thread.start_new_thread(flaskThread, (my_id, ))
-    thread.start_new_thread(init, (my_id, cred))
+    thread.start_new_thread(init, (my_id, cred, ))
     while True:
         time.sleep(1000)
