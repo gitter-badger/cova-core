@@ -1,7 +1,7 @@
 import time, thread, sys
 import router_protocol
 from nodehelpers import request_helper
-from nodehelpers.protocol_const import *
+from nodehelpers.address_helper import *
 
 def hello():
     return 'Router : Hello, World at port ' + sys.argv[1]
@@ -82,7 +82,7 @@ def init(my_id):
     router_protocol.run(my_id)
 
 def flaskThread(my_id):
-    address = ROUTER_ADDRESS[my_id]
+    address = ROUTER_ADDRESS[my_id]['public_ip']
     ob = request_helper.ManualRequest(get_req, post_req, int(address[address.find(':') + 1 : ]))
     ob.run()
     

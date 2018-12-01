@@ -1,6 +1,9 @@
-import hashlib, time, string, random
+import hashlib, time, string, random, json
 from datetime import datetime
 from protocol_const import *
+
+ROUTER_ADDRESS = open('../configs/routing_node_public_credentials.txt', 'r')
+ROUTER_ADDRESS = json.loads(ROUTER_ADDRESS.read())
 
 def random_string():
     letters = string.ascii_lowercase
@@ -23,7 +26,7 @@ def give_me_random_routers(computer_id):
     return random_router
 
 def give_me_router_address(router_id):
-    return 'http://' + str(ROUTER_ADDRESS[router_id])
+    return 'http://' + str(ROUTER_ADDRESS[router_id]['public_ip'])
 
 def give_me_time_counter():
     return int(time.mktime(datetime.now().timetuple()))

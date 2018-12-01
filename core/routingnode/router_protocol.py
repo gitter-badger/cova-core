@@ -1,7 +1,7 @@
 from nodehelpers import database_helper
 from nodehelpers import Requests as requests
 from nodehelpers.protocol_const import *
-from nodehelpers.heartbeat_nodes import *
+from nodehelpers.address_helper import *
 
 import time, thread, json, random, hashlib, string
 from collections import deque
