@@ -2,6 +2,8 @@ import time, thread, sys
 import computer_protocol
 from datetime import datetime
 from nodehelpers import request_helper
+from nodehelpers.address_helper import get_port
+
 
 def hello():
     return 'Computer : Hello, World at port ' + sys.argv[1]
@@ -26,7 +28,8 @@ def init(my_id, address):
     computer_protocol.run(my_id, address)
 
 def flaskThread(address):
-    ob = request_helper.ManualRequest(get_req, post_req, int(address[address.find(':') + 1 : ]))
+    port = get_port(address)
+    ob = request_helper.ManualRequest(get_req, post_req, port)
     ob.run()
     
 def run(my_id, address):

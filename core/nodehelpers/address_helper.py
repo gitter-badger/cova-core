@@ -2,8 +2,10 @@ import hashlib, time, string, random, json
 from datetime import datetime
 from protocol_const import *
 
-ROUTER_ADDRESS = open('../configs/routing_node_public_credentials.txt', 'r')
-ROUTER_ADDRESS = json.loads(ROUTER_ADDRESS.read())
+
+fp = open(ROUTING_NODES, 'r')
+ROUTER_ADDRESS = json.loads(fp.read())
+
 
 def random_string():
     letters = string.ascii_lowercase
@@ -34,3 +36,9 @@ def give_me_time_counter():
 def give_me_time():
     nowtime = datetime.now()
     return str(nowtime.hour) + ':' + str(nowtime.minute) + ':' + str(nowtime.second) + ' '
+
+def get_port(address):
+    if IS_DOCKER:
+        return DEFAULT_DOCKER_COVA_PORT
+    else:
+        return int(address[address.find(':') + 1 : ])

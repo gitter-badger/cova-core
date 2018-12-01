@@ -5,3 +5,7 @@ HEARTBEAT_CLEAR_TIME = 15
 WORKING_COMPUTER_DETECTION_TIME = 15
 SECRET_NUM = 3
 LOCAL = True
+DEFAULT_CRED_PATH = "usercred.json"
+IS_DOCKER = True
+DEFAULT_DOCKER_COVA_PORT = 3051
+ROUTING_NODES = '../configs/routing_node_public_credentials.txt'

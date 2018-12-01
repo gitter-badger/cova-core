@@ -83,7 +83,8 @@ def init(my_id):
 
 def flaskThread(my_id):
     address = ROUTER_ADDRESS[my_id]['public_ip']
-    ob = request_helper.ManualRequest(get_req, post_req, int(address[address.find(':') + 1 : ]))
+    port = get_port(address)
+    ob = request_helper.ManualRequest(get_req, post_req, port)
     ob.run()
     
 def run(my_id):

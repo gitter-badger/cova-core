@@ -1,10 +1,10 @@
 # docker file for running compute node
 FROM python:2.7
 
-ADD ../../ ./
+ADD ../ ./
 
 RUN pip install -r requirements.txt
 
-EXPOSE 11000
+EXPOSE 3051
 
-CMD ["python", "core/compute_node_server.py"]
+CMD ["python", "core/run_server_node.py"]
