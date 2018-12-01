@@ -1,6 +1,6 @@
 import time, thread, sys
 import router_protocol
-import request_helper
+from nodehelper import request_helper
 
 def hello():
     return 'Router : Hello, World at port ' + sys.argv[1]

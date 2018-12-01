@@ -1,8 +1,26 @@
-from protocol_const import *
+from nodehelper import protocol_const, database_helper, heartbeat_nodes
+from nodehelper import Requessts as requessts
+from covavm import runner
+
+NUMBER_OF_ROUTERS = protocol_const.NUMBER_OF_ROUTERS
+HEARTBEAT_ROUTER_COUNT = protocol_const.HEARTBEAT_ROUTER_COUNT
+COMPUTER_HEARTBEAT_TIME = protocol_const.COMPUTER_HEARTBEAT_TIME
+HEARTBEAT_CLEAR_TIME = protocol_const.HEARTBEAT_CLEAR_TIME
+WORKING_COMPUTER_DETECTION_TIME = protocol_const.WORKING_COMPUTER_DETECTION_TIME
+SECRET_NUM = protocol_const.SECRET_NUM
+LOCAL = protocol_const.LOCAL
+ROUTER_ADDRESS = protocol_const.ROUTER_ADDRESS
+give_me_router_address = protocol_const.give_me_router_address
+give_me_computer_address = protocol_const.give_me_computer_address
+give_me_random_routers = heartbeat_nodes.give_me_random_routers
+give_me_time_counter = heartbeat_nodes.give_me_time_counter
+give_me_time = heartbeat_nodes.give_me_time
+
 import time, thread, importlib, json
 from secretsharing import SecretSharer
 import random
-import Requests as requests
+import file_decryption
+import hashlib
 
 HEARTBEAT_ROUTERS = []
 MY_ID = 0
@@ -119,6 +137,34 @@ def temp_working(code_bin):
 
     return ret
 
+def ndarray_to_string(arr):
+
+    return json.dumps(arr.tolist())
+
+def working(code_bin):
+
+    print(MY_KEY_FRAGMENTS)
+    skey = decrypt_secret(MY_KEY_FRAGMENTS)
+
+    print(MY_DATA_LINK)
+    print(skey)
+
+    data = file_decryption.get_data(MY_DATA_LINK, skey)
+
+    print(data)
+
+    data = json.loads(data)
+
+    H = hashlib.md5(code_bin.encode()).hexdigest()
+
+    print(H)
+
+    print(data['policies'])
+
+    ret = runner.run_with_covavm(code_bin, data['data'], data['policies'], ['__covaprogram__'])
+
+    return ndarray_to_string(ret.payload)
+
 def wait_for_work(router_id, task_id, datahash, data_link):
     global IS_WORKING, HEARTBEAT_ROUTERS, MY_TASK_ID, MY_ROUTER_ID, MY_DATAHASH, MY_KEY_FRAGMENTS, MY_DATA_LINK
     IS_WORKING = True
@@ -143,7 +189,10 @@ def do_work(task_id, code):
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
 
-    ret = temp_working(code)
+    if LOCAL:
+        ret = temp_working(code)
+    else:
+        ret = working(code)
 
     FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
     

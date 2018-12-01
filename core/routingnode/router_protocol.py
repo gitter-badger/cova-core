@@ -1,16 +1,29 @@
-from protocol_const import *
+from nodehelper import protocol_const, database_helper, heartbeat_nodes
+from nodehelper import Requessts as requessts
+
+NUMBER_OF_ROUTERS = protocol_const.NUMBER_OF_ROUTERS
+HEARTBEAT_ROUTER_COUNT = protocol_const.HEARTBEAT_ROUTER_COUNT
+COMPUTER_HEARTBEAT_TIME = protocol_const.COMPUTER_HEARTBEAT_TIME
+HEARTBEAT_CLEAR_TIME = protocol_const.HEARTBEAT_CLEAR_TIME
+WORKING_COMPUTER_DETECTION_TIME = protocol_const.WORKING_COMPUTER_DETECTION_TIME
+SECRET_NUM = protocol_const.SECRET_NUM
+LOCAL = protocol_const.LOCAL
+ROUTER_ADDRESS = protocol_const.ROUTER_ADDRESS
+give_me_router_address = protocol_const.give_me_router_address
+give_me_computer_address = protocol_const.give_me_computer_address
+give_me_random_routers = heartbeat_nodes.give_me_random_routers
+give_me_time_counter = heartbeat_nodes.give_me_time_counter
+give_me_time = heartbeat_nodes.give_me_time
+
 import time, thread, json, random, hashlib, string
 from collections import deque
 from datetime import datetime
 from sets import Set
-from pydblite.pydblite import Base
-from database_helper import MemoryQueue, MemoryDict
-import Requests as requests
 
 MY_ID = 0
 AVAILABILITY_LIST = {}
-AVAILABLE_COMPUTERS_DEQUE = MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
-MY_TASK = MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout', 'code_bin'])
+AVAILABLE_COMPUTERS_DEQUE = database_helper.MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
+MY_TASK = database_helper.MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout', 'code_bin'])
 MY_SECRET = 0
 FP = 0
 PENDING_TASK = {}
