@@ -46,10 +46,13 @@ def init(my_id):
     if LOCAL:
         return
 
-    address = 'http://localhost:5002/create_cred/d/' + str(MY_ID)
+    fp = open('routingnode/cred_' + str(MY_ID) + '.txt', 'r')
 
-    CREDENTIALS = requests.get(address).text
-    CREDENTIALS = json.loads(CREDENTIALS)
+    cred = fp.read()
+    fp.close()
+    CREDENTIALS = json.loads(cred)
+
+    print(CREDENTIALS)
 
 def make_computer_available(computer_id):
     global AVAIBILITY_LIST
@@ -298,7 +301,7 @@ def new_task(data_user_id, task_id):
 
 def end_task(task_id, return_value, notify_data_user = True):
 
-    global UNDER_MY_WORKING, MY_TASK
+    global UNDER_MY_WORKING, MY_TASK, CREDENTIALS
 
     record = MY_TASK.give_me_elem(task_id)
 
@@ -337,6 +340,13 @@ def end_task(task_id, return_value, notify_data_user = True):
         global RESULT
 
         RESULT[task_id] = return_value
+
+        address = 'http://localhost:5001/register_task'
+
+        try:
+            requests.post(address, data = {'bdb_public_key' : CREDENTIALS['bdb_cred']['publicKey'], 'bdb_private_key' : CREDENTIALS['bdb_cred']['privateKey'], 'task_id' : task_id})
+        except:
+            print('Could Not Update in bigchaindb')
 
 def reassign_task(computer_id, data_user_id, task_id):
     FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Reassigning task id ' + str(task_id) + '\n')
