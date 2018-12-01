@@ -78,8 +78,8 @@ request_helper.dec_key_fragment = dec_key_fragment
 request_helper.join_req = join_req
 request_helper.give_me_result = give_me_result
 
-def init(my_id):
-    router_protocol.run(my_id)
+def init(my_id, cred):
+    router_protocol.run(my_id, cred)
 
 def flaskThread(my_id):
     address = ROUTER_ADDRESS[my_id]['public_ip']
@@ -87,8 +87,8 @@ def flaskThread(my_id):
     ob = request_helper.ManualRequest(get_req, post_req, port)
     ob.run()
     
-def run(my_id):
+def run(my_id, cred):
     thread.start_new_thread(flaskThread, (my_id, ))
-    thread.start_new_thread(init, (my_id, ))
+    thread.start_new_thread(init, (my_id, cred))
     while True:
         time.sleep(1000)

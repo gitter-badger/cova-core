@@ -10,7 +10,6 @@ def get_credentials(cred_path):
 
 if __name__ == "__main__":
     try:
-        
         cred = get_credentials(DEFAULT_CRED_PATH)
 
         if cred["router"]:

@@ -38,21 +38,15 @@ def join_req(computer_id, address):
     global AVAILABILITY_LIST
     AVAILABILITY_LIST[computer_id] = {'availability' : True, 'address' : address}
 
-def init(my_id):
+def init(my_id, cred):
     global MY_ID, FP, CREDENTIALS
     MY_ID = my_id
     FP = open('Log/router.txt', 'a+', 0)
 
     if LOCAL:
         return
-
-    fp = open('routingnode/cred_' + str(MY_ID) + '.txt', 'r')
-
-    cred = fp.read()
-    fp.close()
-    CREDENTIALS = json.loads(cred)
-
-    print(CREDENTIALS)
+        
+    CREDENTIALS = cred
 
 def make_computer_available(computer_id):
     global AVAIBILITY_LIST
