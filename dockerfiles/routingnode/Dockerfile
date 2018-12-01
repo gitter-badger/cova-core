@@ -5,4 +5,6 @@ ADD ../../ ./
 
 RUN pip install -r requirements.txt
 
+EXPOSE 10000
+
 CMD ["python", "core/routing_node_server.py"]
