@@ -7,6 +7,7 @@ import time, thread, json, random, hashlib, string
 from collections import deque
 from datetime import datetime
 from sets import Set
+import decrypt_key
 
 MY_ID = 0
 AVAILABILITY_LIST = {}
@@ -15,8 +16,19 @@ MY_TASK = database_helper.MemoryDict('My_Task', 'task_id', ['data_user_id', 'com
 FP = 0
 PENDING_TASK = {}
 CREDENTIALS = {}
+RESULT = {}
 
 UNDER_MY_WORKING = Set()
+
+def give_me_result(task_id):
+    if task_id not in RESULT:
+        return 'Result Not Found'
+
+    ret = RESULT[task_id]
+
+    RESULT.pop(task_id)
+
+    return ret
 
 def give_me_computer_address(computer_id):
     global AVAILABILITY_LIST
@@ -209,8 +221,6 @@ def dec_key_fragment(datahash):
 
     ret = str(ret['keyfrag'])
 
-    address = 'http://localhost:5002/decrypt'
-
     try:
         private_key = str(CREDENTIALS['rsa_cred']['privateKey'])
     except:
@@ -218,7 +228,7 @@ def dec_key_fragment(datahash):
         return datahash + str(MY_ID)
 
     try:
-        ret = str(requests.post(address, data = {'enc_data' : ret, 'private_key' : private_key}).text)
+        ret = str(decrypt_key.decrypt_message(ret, private_key))
     except:
         print('Decryption Error')
         return datahash + str(MY_ID)
@@ -323,6 +333,10 @@ def end_task(task_id, return_value, notify_data_user = True):
         fp = open('Log/task_id_' + str(task_id) + '.txt', 'w')
         fp.write(return_value)
         fp.close()
+
+        global RESULT
+
+        RESULT[task_id] = return_value
 
 def reassign_task(computer_id, data_user_id, task_id):
     FP.write(give_me_time() + 'ROUTER ' + str(MY_ID) + ' Reassigning task id ' + str(task_id) + '\n')

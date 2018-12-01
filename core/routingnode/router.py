@@ -47,8 +47,12 @@ def join_req(computer_id, form):
     router_protocol.join_req(str(computer_id), str(form['address']))
     return 'joined'
 
+def give_me_result(task_id):
+    return router_protocol.give_me_result(str(task_id))
+
 get_req = {'hello' : ['/', 0],
-           'allstatus' : ['/allstatus', 0]}
+           'allstatus' : ['/allstatus', 0],
+           'give_me_result' : ['/give_me_result', 1]}
 post_req = {'heartbeat_from_computer' : ['/computer/heartbeat', 1],
             'heartbeat_from_working_computer' : ['/computer/workingheartbeat', 1],
             'start_working_post' : ['/computer/work', 1],
@@ -72,6 +76,7 @@ request_helper.end_task = end_task
 request_helper.search_available = search_available
 request_helper.dec_key_fragment = dec_key_fragment
 request_helper.join_req = join_req
+request_helper.give_me_result = give_me_result
 
 def init(my_id):
     router_protocol.run(my_id)
