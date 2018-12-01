@@ -1,7 +1,7 @@
 # docker file for running compute node
 FROM python:2.7
 
-ADD ../ ./
+ADD ./ ./
 
 RUN pip install -r requirements.txt
 
