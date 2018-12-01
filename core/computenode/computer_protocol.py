@@ -62,7 +62,7 @@ def give_me_key_fragments(datahash):
     counter = 0
 
     while True:
-        router_id = (start_node + i) % NUMBER_OF_ROUTERS
+        router_id = (start_node + counter) % NUMBER_OF_ROUTERS
 
         router_id = 'router' + str(router_id)
 
