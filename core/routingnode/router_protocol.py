@@ -19,7 +19,8 @@ CREDENTIALS = {}
 UNDER_MY_WORKING = Set()
 
 def give_me_computer_address(computer_id):
-    return 'http://' + AVAIBILITY_LIST[computer_id]['address']
+    global AVAILABILITY_LIST
+    return 'http://' + AVAILABILITY_LIST[computer_id]['address']
 
 def join_req(computer_id, address):
     global AVAILABILITY_LIST
@@ -85,7 +86,7 @@ def search_for_available_computer():
 
     while True:
         random_router_id = random.randint(0, NUMBER_OF_ROUTERS - 1)
-        random_router_id += 10000
+        random_router_id = 'router' + str(random_router_id)
         router_address = give_me_router_address(str(random_router_id))
         router_address += '/search_available'
         computer_id = str(requests.post(router_address).text)
@@ -319,7 +320,7 @@ def end_task(task_id, return_value, notify_data_user = True):
         #data_user_address = give_me_data_user_address(data_user_id)
         #data_user_address += '/end_task'
         #requests.post(data_user_address, data = {'task_id' : str(task_id), 'return_value' : str(return_value)})
-        fp = open('Test Files/task_id_' + str(task_id) + '.txt', 'w')
+        fp = open('Log/task_id_' + str(task_id) + '.txt', 'w')
         fp.write(return_value)
         fp.close()
 

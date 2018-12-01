@@ -133,6 +133,38 @@ def ndarray_to_string(arr):
 
 def working(code_bin):
 
+    if LOCAL:
+
+        fileHash = str(hashlib.md5(code_bin.encode()).hexdigest())
+
+        policy_text = {
+            "pre": {
+                "fileHash": {
+                    "equalTo": fileHash
+                }
+            },
+
+            "runtime": {
+                "_printBytecode": {
+                }
+            },
+
+            "post": {
+            }
+        }
+
+        policy_text = json.dumps(policy_text)
+
+        ret = runner.run_with_covavm(code_bin, None, policy_text, ['__covaprogram__'])
+
+        try:
+            return ndarray_to_string(ret.payload)
+        except:
+            return str(ret.payload)
+
+        return 'None'
+
+
     print(MY_KEY_FRAGMENTS)
     skey = decrypt_secret(MY_KEY_FRAGMENTS)
 
@@ -180,7 +212,7 @@ def do_work(task_id, code):
     #FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
 
     if LOCAL:
-        ret = temp_working(code)
+        ret = working(code)
     else:
         ret = working(code)
 

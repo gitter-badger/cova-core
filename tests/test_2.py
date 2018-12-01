@@ -15,16 +15,16 @@ def load_code(file_path):
     fp = open(file_path, 'r')
     return fp.read()
 
-FP = open('../computer_logs.txt', 'r')
+#FP = open('../computer_logs.txt', 'r')
 
-COMPUTER_ID = FP.read().split()
-COMPUTER_ID = [int(i) for i in COMPUTER_ID]
+#COMPUTER_ID = FP.read().split()
+#COMPUTER_ID = [int(i) for i in COMPUTER_ID]
 
 def kill_computer(computer_id):
     os.kill(COMPUTER_ID[int(computer_id) - 11000 + 1], signal.SIGKILL)
 
 datahash = 'nadimgukhay'
-code_bin = load_code('data_user_code.py')
+code_bin = load_code('code.py')
 
 ret = json.loads(init_task(10000, 15, datahash, code_bin))
 
@@ -42,6 +42,6 @@ print('Got Computer : ' + str(now_computer))
 
 print(now_computer)
 
-time.sleep(15)
+#time.sleep(15)
 
-kill_computer(now_computer)
+#kill_computer(now_computer)
