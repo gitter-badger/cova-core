@@ -62,7 +62,7 @@ def give_me_key_fragments(datahash):
     for i in range(SECRET_NUM):
         router_id = (start_node + i) % NUMBER_OF_ROUTERS
 
-        router_id += 10000
+        router_id = 'router' + str(router_id)
 
         address = give_me_router_address(str(router_id))
         address += '/dec_key_fragment'
