@@ -359,8 +359,8 @@ def check_working_computers():
 
         time.sleep(WORKING_COMPUTER_DETECTION_TIME)
 
-def run(my_id):
-    init(my_id)
+def run(my_id, cred):
+    init(my_id, cred)
     thread.start_new_thread(delete_expired_heartbeat, ())
     thread.start_new_thread(check_working_computers, ())
     while True:
