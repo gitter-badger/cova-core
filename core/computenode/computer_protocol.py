@@ -1,20 +1,8 @@
-from nodehelper import protocol_const, database_helper, heartbeat_nodes
-from nodehelper import Requessts as requessts
+from nodehelpers import database_helper
+from nodehelpers import Requests as requests
 from covavm import runner
-
-NUMBER_OF_ROUTERS = protocol_const.NUMBER_OF_ROUTERS
-HEARTBEAT_ROUTER_COUNT = protocol_const.HEARTBEAT_ROUTER_COUNT
-COMPUTER_HEARTBEAT_TIME = protocol_const.COMPUTER_HEARTBEAT_TIME
-HEARTBEAT_CLEAR_TIME = protocol_const.HEARTBEAT_CLEAR_TIME
-WORKING_COMPUTER_DETECTION_TIME = protocol_const.WORKING_COMPUTER_DETECTION_TIME
-SECRET_NUM = protocol_const.SECRET_NUM
-LOCAL = protocol_const.LOCAL
-ROUTER_ADDRESS = protocol_const.ROUTER_ADDRESS
-give_me_router_address = protocol_const.give_me_router_address
-give_me_computer_address = protocol_const.give_me_computer_address
-give_me_random_routers = heartbeat_nodes.give_me_random_routers
-give_me_time_counter = heartbeat_nodes.give_me_time_counter
-give_me_time = heartbeat_nodes.give_me_time
+from nodehelpers.protocol_const import *
+from nodehelpers.heartbeat_nodes import *
 
 import time, thread, importlib, json
 from secretsharing import SecretSharer
@@ -32,23 +20,25 @@ MY_DATAHASH = ""
 MY_KEY_FRAGMENTS = []
 MY_DATA_LINK = ""
 
-def init(my_id):
+def init(my_id, my_address):
     global MY_ID, HEARTBEAT_ROUTERS, IS_WORKING, FP
     IS_WORKING = False
     MY_ID = my_id
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)
-    FP = open('Log/computer.txt', 'a+', 0)
+    #FP = open('Log/computer.txt', 'a+', 0)
 
-    for router in range(NUMBER_OF_ROUTERS):
-        router_address = give_me_router_address(str(router + 10000))
+    for router_address in ROUTER_ADDRESS:
+        router_address = give_me_router_address(router_address)
         router_address += '/join_req/'
         router_address += str(MY_ID)
-        requests.get(router_address)
+        print(router_address)
+        requests.post(router_address, data = {'address' : my_address})
 
 def send_heartbeat():
     while True:
         for router in HEARTBEAT_ROUTERS:
             router_address = give_me_router_address(router)
+
             if IS_WORKING:
                 router_address += '/computer/workingheartbeat/'
             else:
@@ -178,7 +168,7 @@ def wait_for_work(router_id, task_id, datahash, data_link):
     MY_KEY_FRAGMENTS = give_me_key_fragments(datahash)
     MY_KEY_FRAGMENTS = [str(i) for i in MY_KEY_FRAGMENTS]
 
-    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Waiting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
+    #FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Waiting task id ' + str(task_id) + ' from router id ' + str(router_id) + '\n')
 
 def do_work(task_id, code):
 
@@ -187,14 +177,14 @@ def do_work(task_id, code):
     if(task_id != MY_TASK_ID):
         return
 
-    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
+    #FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Working task id ' + str(task_id) + '\n')
 
     if LOCAL:
         ret = temp_working(code)
     else:
         ret = working(code)
 
-    FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
+    #FP.write(give_me_time() + 'COMPUTER ' + str(MY_ID) + ' Finished task id ' + str(task_id) + '\n')
     
     IS_WORKING = False
     HEARTBEAT_ROUTERS = give_me_random_routers(MY_ID)
@@ -205,8 +195,8 @@ def do_work(task_id, code):
 def goto_work(task_id, code_bin):
     thread.start_new_thread(do_work, (task_id, code_bin))
     
-def run(my_id):
-    init(my_id)
+def run(my_id, my_address):
+    init(my_id, my_address)
     thread.start_new_thread(send_heartbeat, ())
     while True:
         time.sleep(1000)

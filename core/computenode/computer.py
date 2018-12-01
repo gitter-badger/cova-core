@@ -1,7 +1,7 @@
 import time, thread, sys
 import computer_protocol
 from datetime import datetime
-from nodehelper import request_helper
+from nodehelpers import request_helper
 
 def hello():
     return 'Computer : Hello, World at port ' + sys.argv[1]
@@ -22,15 +22,15 @@ request_helper.hello = hello
 request_helper.new_task_post = new_task_post
 request_helper.goto_work = goto_work
 
-def init():
-    computer_protocol.run(str(sys.argv[1]))
+def init(my_id, address):
+    computer_protocol.run(my_id, address)
 
-def flaskThread():
-    ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))
+def flaskThread(address):
+    ob = request_helper.ManualRequest(get_req, post_req, int(address[address.find(':') + 1 : ]))
     ob.run()
     
-if __name__ == "__main__":
-    thread.start_new_thread(flaskThread, ())
-    thread.start_new_thread(init, ())
+def run(my_id, address):
+    thread.start_new_thread(flaskThread, (address, ))
+    thread.start_new_thread(init, (my_id, address ))
     while True:
         time.sleep(1000)

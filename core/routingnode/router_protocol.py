@@ -1,19 +1,7 @@
-from nodehelper import protocol_const, database_helper, heartbeat_nodes
-from nodehelper import Requessts as requessts
-
-NUMBER_OF_ROUTERS = protocol_const.NUMBER_OF_ROUTERS
-HEARTBEAT_ROUTER_COUNT = protocol_const.HEARTBEAT_ROUTER_COUNT
-COMPUTER_HEARTBEAT_TIME = protocol_const.COMPUTER_HEARTBEAT_TIME
-HEARTBEAT_CLEAR_TIME = protocol_const.HEARTBEAT_CLEAR_TIME
-WORKING_COMPUTER_DETECTION_TIME = protocol_const.WORKING_COMPUTER_DETECTION_TIME
-SECRET_NUM = protocol_const.SECRET_NUM
-LOCAL = protocol_const.LOCAL
-ROUTER_ADDRESS = protocol_const.ROUTER_ADDRESS
-give_me_router_address = protocol_const.give_me_router_address
-give_me_computer_address = protocol_const.give_me_computer_address
-give_me_random_routers = heartbeat_nodes.give_me_random_routers
-give_me_time_counter = heartbeat_nodes.give_me_time_counter
-give_me_time = heartbeat_nodes.give_me_time
+from nodehelpers import database_helper
+from nodehelpers import Requests as requests
+from nodehelpers.protocol_const import *
+from nodehelpers.heartbeat_nodes import *
 
 import time, thread, json, random, hashlib, string
 from collections import deque
@@ -24,21 +12,18 @@ MY_ID = 0
 AVAILABILITY_LIST = {}
 AVAILABLE_COMPUTERS_DEQUE = database_helper.MemoryQueue('Available_Computer', ['computer_id', 'localtime'])
 MY_TASK = database_helper.MemoryDict('My_Task', 'task_id', ['data_user_id', 'computer_id', 'heartbeat', 'datahash', 'cost', 'timeout', 'code_bin'])
-MY_SECRET = 0
 FP = 0
 PENDING_TASK = {}
 CREDENTIALS = {}
 
 UNDER_MY_WORKING = Set()
 
-def join_req(computer_id):
-    global AVAILABILITY_LIST
-    AVAILABILITY_LIST[computer_id] = True
+def give_me_computer_address(computer_id):
+    return 'http://' + AVAIBILITY_LIST[computer_id]['address']
 
-def set_secret(secret):
-    global MY_SECRET
-    MY_SECRET = str(secret)
-    return 'Got Secret'
+def join_req(computer_id, address):
+    global AVAILABILITY_LIST
+    AVAILABILITY_LIST[computer_id] = {'availability' : True, 'address' : address}
 
 def init(my_id):
     global MY_ID, FP, CREDENTIALS
@@ -55,11 +40,11 @@ def init(my_id):
 
 def make_computer_available(computer_id):
     global AVAIBILITY_LIST
-    AVAILABILITY_LIST[computer_id] = True
+    AVAILABILITY_LIST[computer_id]['availability'] = True
     
 def make_computer_unavailable(computer_id):
     global AVAIBILITY_LIST
-    AVAILABILITY_LIST[computer_id] = False
+    AVAILABILITY_LIST[computer_id]['availability'] = False
 
 def process_heartbeat(computer_id, localtime):
     global AVAILABLE_COMPUTERS_DEQUE
@@ -88,7 +73,7 @@ def give_me_available_computer():
 
     while not AVAILABLE_COMPUTERS_DEQUE.is_empty():
         now_heartbeat = AVAILABLE_COMPUTERS_DEQUE.top()
-        if AVAILABILITY_LIST[now_heartbeat['computer_id']]:
+        if AVAILABILITY_LIST[now_heartbeat['computer_id']]['availability']:
             return now_heartbeat['computer_id']
         AVAILABLE_COMPUTERS_DEQUE.pop()
 

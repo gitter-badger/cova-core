@@ -5,7 +5,9 @@ HEARTBEAT_CLEAR_TIME = 15
 WORKING_COMPUTER_DETECTION_TIME = 15
 SECRET_NUM = 2
 LOCAL = True
-ROUTER_ADDRESS = ['localhost:10000', 'localhost:10001', 'localhost:10002', 'localhost:10003', 'localhost:100004']
 
-give_me_router_address = lambda router_id : 'http://' + router_id
-give_me_computer_address = lambda computer_id : 'http://' + computer_id
+ROUTER_ADDRESS = {'router0' : 'localhost:10000',
+                  'router1' : 'localhost:10001',
+                  'router2' : 'localhost:10002',
+                  'router3' : 'localhost:10003',
+                  'router4' : 'localhost:10004'}

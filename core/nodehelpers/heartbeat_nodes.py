@@ -13,12 +13,17 @@ def give_me_random_routers(computer_id):
     while len(random_router) < HEARTBEAT_ROUTER_COUNT:
         now_router = random.randint(0, NUMBER_OF_ROUTERS - 1)
 
-        if now_router in random_router:
+        now_id = 'router' + str(now_router)
+
+        if now_id in random_router:
             continue
 
-        random_router.append(ROUTER_ADDRESS[now_router])
+        random_router.append(now_id)
     
     return random_router
+
+def give_me_router_address(router_id):
+    return 'http://' + str(ROUTER_ADDRESS[router_id])
 
 def give_me_time_counter():
     return int(time.mktime(datetime.now().timetuple()))

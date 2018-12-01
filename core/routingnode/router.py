@@ -1,6 +1,7 @@
 import time, thread, sys
 import router_protocol
-from nodehelper import request_helper
+from nodehelpers import request_helper
+from nodehelpers.protocol_const import *
 
 def hello():
     return 'Router : Hello, World at port ' + sys.argv[1]
@@ -42,13 +43,12 @@ def dec_key_fragment(form):
     print('Got It in dec key')
     return router_protocol.dec_key_fragment(str(form['datahash']))
 
-def join_req(computer_id):
-    router_protocol.join_req(str(computer_id))
+def join_req(computer_id, form):
+    router_protocol.join_req(str(computer_id), str(form['address']))
     return 'joined'
 
 get_req = {'hello' : ['/', 0],
-           'allstatus' : ['/allstatus', 0],
-           'join_req' : ['/join_req', 1]}
+           'allstatus' : ['/allstatus', 0]}
 post_req = {'heartbeat_from_computer' : ['/computer/heartbeat', 1],
             'heartbeat_from_working_computer' : ['/computer/workingheartbeat', 1],
             'start_working_post' : ['/computer/work', 1],
@@ -57,7 +57,8 @@ post_req = {'heartbeat_from_computer' : ['/computer/heartbeat', 1],
             'new_task' : ['/data_user/new_task', 1],
             'end_task' : ['/computer/end_task', 0],
             'search_available' : ['/search_available', 0],
-            'dec_key_fragment' : ['/dec_key_fragment', 0]}
+            'dec_key_fragment' : ['/dec_key_fragment', 0],
+            'join_req' : ['/join_req', 1]}
 
 request_helper.hello = hello
 request_helper.allstatus = allstatus
@@ -72,15 +73,16 @@ request_helper.search_available = search_available
 request_helper.dec_key_fragment = dec_key_fragment
 request_helper.join_req = join_req
 
-def init():
-    router_protocol.run(str(sys.argv[1]))
+def init(my_id):
+    router_protocol.run(my_id)
 
-def flaskThread():
-    ob = request_helper.ManualRequest(get_req, post_req, int(sys.argv[1]))
+def flaskThread(my_id):
+    address = ROUTER_ADDRESS[my_id]
+    ob = request_helper.ManualRequest(get_req, post_req, int(address[address.find(':') + 1 : ]))
     ob.run()
     
-if __name__ == "__main__":
-    thread.start_new_thread(flaskThread, ())
-    thread.start_new_thread(init, ())
+def run(my_id):
+    thread.start_new_thread(flaskThread, (my_id, ))
+    thread.start_new_thread(init, (my_id, ))
     while True:
         time.sleep(1000)
