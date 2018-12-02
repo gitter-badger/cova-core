@@ -17,10 +17,6 @@ def run_with_covavm(code_src, data, policy_text, args, package=None):
     # policy_text = data owner's policy in JSON
     # args = list of arguments
 
-    # parse the policy
-    # TODO: Replace with Centrifuge parser
-    policy = json.loads(policy_text)
-
     # Create a module to serve as __main__
     old_main_mod = sys.modules['__main__']
     main_mod = imp.new_module('__main__')
@@ -38,7 +34,7 @@ def run_with_covavm(code_src, data, policy_text, args, package=None):
         sys.path[0] = ''
 
     # Instantiate a fresh CovaVM
-    vm_instance = vm.CovaVM(code=code_src, data=data, policy=policy, env=main_mod.__dict__)
+    vm_instance = vm.CovaVM(code=code_src, data=data, policy=policy_text, env=main_mod.__dict__)
     vm_instance.run_program() # gitrun program with policies
     sys.modules['__main__'] = old_main_mod
 

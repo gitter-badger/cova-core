@@ -19,6 +19,8 @@ import hashlib # for fileHash
 import six
 from six.moves import reprlib
 
+from centrifuge import *
+
 PY3, PY2 = six.PY3, not six.PY3
 
 from pyobj import Frame, Block, Method, Function, Generator
@@ -34,7 +36,6 @@ else:
 repr_obj = reprlib.Repr()
 repr_obj.maxother = 120
 repper = repr_obj.repr
-
 
 class ReturnData(Exception):
     """ReturnData(PyObject) will signal to the supervising instance to send data back to
@@ -62,102 +63,6 @@ class CovaVMResult(object):
             return "<CovaVMResult: Policy Violation>"
         else:
             return "<CovaVMResult: Program Error>"
-
-# Policy Builtins
-
-class COVAPolicy(object):
-    default_opts = dict()
-    def __init__(self, options = dict()):
-        self.options = dict()
-        self.options.update(self.default_opts)
-        self.options.update(options)
-    
-    def violation(self, message):
-        raise PolicyManager.PolicyViolationError(message)
-
-class Precondition(COVAPolicy):
-    def run(self, context):
-        pass
-
-"""
-Runtime Policies can be simple to write and express complex behavior by using the policy
-pattern of using a finite state automaton. Keep a policy state and create transition
-functions that change the state upon bytecode dispatch events from receive_bytecode().
-"""
-class RuntimePolicy(COVAPolicy):
-    def receive_bytecode(self, bytecode, args):
-        pass
-
-class Postcondition(COVAPolicy):
-    def run(self, data):
-        pass
-
-class FileHashPolicy(Precondition):
-    # TODO: Add error checking and verification
-    def run(self, context):
-        text = context["program"]
-        hashed = hashlib.md5(text.encode())
-        if (hashed.hexdigest() != self.options["equalTo"]):
-            self.violation('Program hash "%s" does not match "%s"' % (hashed.hexdigest(), self.options["equalTo"]))
-
-class FunctionHashPolicy(RuntimePolicy):
-    # TODO: Reimplement
-    pass
-
-class PrintBytecodePolicy(RuntimePolicy):
-    def receive_bytecode(self, bytecode, args):
-        print(bytecode, args)
-
-PRECONDITIONS = {
-    "fileHash": FileHashPolicy
-}
-
-RUNTIME_POLICIES = {
-    "_printBytecode": PrintBytecodePolicy
-}
-
-POSTCONDITIONS = {
-
-}
-
-class PolicyManager(object):
-
-    class PolicyViolationError(Exception):
-        pass
-
-    """PolicyManagers are objects that live within the CovaVM instance that propagate
-    bytecode dispatch events to loaded Smart Policies, using a publish and subscribe
-    model."""
-    def __init__(self, vm, policy):
-        self.vm = vm
-        self.policy = policy
-        self.preconditions = policy["pre"]
-        self.runtime_policies = policy["runtime"]
-        self.postconditions = policy["post"]
-        
-        # monitors are instantiated, stateful runtime policies
-        self.monitors = []
-        for key in self.runtime_policies:
-            options = self.runtime_policies[key]
-            self.monitors.append(RUNTIME_POLICIES[key](options))
-    
-    def run_preconditions(self):
-        context = {
-            "program": self.vm.code
-        }
-
-        for key in self.preconditions:
-            options = self.preconditions[key]
-            # Establish the policy context
-            PRECONDITIONS[key](options).run(context)
-    
-    def run_postconditions(self):
-        pass
-    
-    def broadcast_bytecode(self, bytecode, args):
-        for monitor in self.monitors:
-            monitor.receive_bytecode(bytecode, args)
-    # TODO: Figure out more efficient way to broadcast events
 
 
 class COVAInterface(object):
@@ -296,18 +201,18 @@ class CovaVM(object):
     
     def run_program(self):
         source = self.code
-        # We have the source.  `compile` still needs the last line to be clean,
-        # so make sure it is, then compile a code object from it.
-        if not source or source[-1] != '\n':
-            source += '\n'
-        code_obj = compile(source, '__COVA__', "exec")
-        frame = self.make_frame(code_obj, f_globals=self.env)
         try:
+            # We have the source.  `compile` still needs the last line to be clean,
+            # so make sure it is, then compile a code object from it.
+            if not source or source[-1] != '\n':
+                source += '\n'
+            code_obj = compile(source, '__COVA__', "exec")
+            frame = self.make_frame(code_obj, f_globals=self.env)
             self.pm.run_preconditions()
             self.run_frame(frame) # runtime policies will be enforced
         except ReturnData as return_data:
             self.result = return_data.data
-        except PolicyManager.PolicyViolationError as violation:
+        except PolicyViolationError as violation:
             self.result = CovaVMResult(VM_POLICY_VIOLATION, violation)
             return self.result
         except Exception as error:
