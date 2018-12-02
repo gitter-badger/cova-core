@@ -4,7 +4,7 @@ from nodehelpers import request_helper
 from nodehelpers.address_helper import *
 
 def hello():
-    return 'Router : Hello, World at port ' + sys.argv[1]
+    return 'Router : Hello, World at port ' + router_protocol.MY_ID
 
 def heartbeat_from_computer(computer_id, form):
     router_protocol.process_heartbeat(str(computer_id), int(form['localtime']))
