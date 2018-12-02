@@ -1,7 +1,8 @@
 import json
 import sys
+from configs.config_loader import load_config
 from configs.protocol_const import DEFAULT_USERCRED_FP
-from configs.protocol_loader import load_config
+
 
 
 def get_credentials(cred_path):

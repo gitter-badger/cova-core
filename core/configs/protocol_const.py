@@ -9,3 +9,5 @@ DEFAULT_USERCRED_FP = "usercred.json"
 IS_DOCKER = True
 DEFAULT_DOCKER_COVA_PORT = 3051
 PUBLIC_ROUTING_NODES_FP = 'routing_node_public_credentials.json'
+BDB_API_ENDPOINT = "http://localhost:5001"
+ETH_API_ENDPOINT = "http://localhost:5000"

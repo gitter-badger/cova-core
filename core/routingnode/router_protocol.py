@@ -7,8 +7,9 @@ import decrypt_key
 
 from nodehelpers import database_helper
 from nodehelpers import Requests as requests
+from configs.config_loader import load_config
 from configs.protocol_const import *
-from configs.protocol_loader import load_config
+
 
 MY_ID = 0
 AVAILABILITY_LIST = {}
@@ -141,7 +142,7 @@ def check_for_agreement(data_user_id, task_id):
     if LOCAL:
         return True
 
-    address = 'http://localhost:5000/payment/seeAgreement/' + task_id
+    address = ETH_API_ENDPOINT + '/payment/seeAgreement/' + task_id
 
     print(address)
 
@@ -179,7 +180,7 @@ def get_data_link(datahash):
     if LOCAL:
         return 'cova.com'
 
-    address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
+    address = BDB_API_ENDPOINT + '/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
 
     try:
         ret = requests.get(address).text
@@ -204,7 +205,7 @@ def dec_key_fragment(datahash):
     if LOCAL:
         return 'my_key' + str(MY_ID)
 
-    address = 'http://localhost:5001/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
+    address = BDB_API_ENDPOINT + '/get_keyfrag/' + str(datahash) + '/' + str(MY_ID)
 
     try:
         ret = requests.get(address).text
@@ -337,7 +338,7 @@ def end_task(task_id, return_value, notify_data_user = True):
 
         RESULT[task_id] = return_value
 
-        address = 'http://localhost:5001/register_task'
+        address = BDB_API_ENDPOINT + '/register_task'
 
         try:
             requests.post(address, data = {'bdb_public_key' : CREDENTIALS['bdb_cred']['publicKey'], 'bdb_private_key' : CREDENTIALS['bdb_cred']['privateKey'], 'task_id' : task_id})
