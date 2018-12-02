@@ -4,11 +4,11 @@ import string
 import random
 import json
 from datetime import datetime
-from file_helpers import get_absolute_path
-from protocol_const import *
+from configs.protocol_loader import load_config
+from configs.protocol_const import *
 
 
-fp = open(get_absolute_path(ROUTING_NODES), 'r')
+fp = open(load_config(ROUTING_NODES), 'r')
 ROUTER_ADDRESS = json.loads(fp.read())
 
 

@@ -1,13 +1,14 @@
-from nodehelpers import database_helper
-from nodehelpers import Requests as requests
-from nodehelpers.protocol_const import *
-from nodehelpers.address_helper import *
-
 import time, thread, json, random, hashlib, string
+
 from collections import deque
 from datetime import datetime
 from sets import Set
 import decrypt_key
+
+from nodehelpers import database_helper
+from nodehelpers import Requests as requests
+from configs.protocol_const import *
+from configs.protocol_loader import load_config
 
 MY_ID = 0
 AVAILABILITY_LIST = {}
@@ -19,6 +20,7 @@ CREDENTIALS = {}
 RESULT = {}
 
 UNDER_MY_WORKING = Set()
+
 
 def give_me_result(task_id):
     if task_id not in RESULT:

@@ -1,5 +1,5 @@
 # user credential json
-configs/usercred.json
+core/configs/usercred.json
 
 # mac files
 .DS_Store

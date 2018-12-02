@@ -1,11 +1,11 @@
 import json
 import sys
-from nodehelpers.protocol_const import DEFAULT_CRED_PATH
-from nodehelpers.file_helpers import get_absolute_path
+from configs.protocol_const import DEFAULT_USERCRED_FP
+from configs.protocol_loader import load_config
 
 
 def get_credentials(cred_path):
-    with open(get_absolute_path(cred_path)) as f:
+    with open(load_config(cred_path)) as f:
         return json.load(f)
 
 if __name__ == "__main__":
@@ -14,7 +14,7 @@ if __name__ == "__main__":
         if len(sys.argv) == 2:
             cred = get_credentials(sys.argv[1])
         else:
-            cred = get_credentials(DEFAULT_CRED_PATH)
+            cred = get_credentials(DEFAULT_USERCRED_FP)
     except Exception as e:
         print "FAILED TO GET CREDENTIALS"
         raise e
