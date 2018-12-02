@@ -8,4 +8,6 @@ RUN pip install -r requirements.txt
 
 EXPOSE 3051
 
-CMD ["python", "core/run_server_node.py"]
+WORKDIR /cova-core/core
+
+CMD ["python", "run_server_node.py"]
