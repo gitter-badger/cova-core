@@ -9,6 +9,7 @@ from nodehelpers import database_helper
 from nodehelpers import Requests as requests
 from configs.config_loader import load_config
 from configs.protocol_const import *
+from nodehelpers.address_helper import *
 
 
 MY_ID = 0
