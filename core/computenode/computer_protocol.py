@@ -1,7 +1,7 @@
 from nodehelpers import database_helper
 from nodehelpers import Requests as requests
 from covavm import runner
-from nodehelpers.protocol_const import *
+from configs.protocol_const import *
 from nodehelpers.address_helper import *
 
 import time, thread, importlib, json
