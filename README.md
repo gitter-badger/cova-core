@@ -1,6 +1,8 @@
 COVA Core
 ========================
 
+[![Join the chat at https://gitter.im/covalent-hq/cova-core](https://badges.gitter.im/covalent-hq/cova-core.svg)](https://gitter.im/covalent-hq/cova-core?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This projecy contains the public facing repo for COVA core.
 
 This repo has four major components: 
